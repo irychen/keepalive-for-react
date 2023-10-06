@@ -1,0 +1,40 @@
+{
+  "name": "react-keepalive",
+  "version": "1.0.0",
+  "description": "a react keepalive component",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rollup --config rollup.config.ts --configPlugin typescript"
+  },
+  "keywords": [
+    "react",
+    "keepalive",
+    "react-keepalive"
+  ],
+  "author": "wongyichen",
+  "license": "MIT",
+  "dependencies": {
+    "@rollup/plugin-babel": "^6.0.4",
+    "@rollup/plugin-typescript": "^11.1.5",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.16.0",
+    "rollup": "^4.0.2",
+    "tslib": "^2.6.2",
+    "typescript": "^5.2.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.23.0",
+    "@babel/plugin-transform-runtime": "^7.22.15",
+    "@babel/preset-env": "^7.22.20",
+    "@babel/preset-typescript": "^7.23.0",
+    "@babel/runtime": "^7.23.1",
+    "@rollup/plugin-node-resolve": "^15.2.2",
+    "@rollup/plugin-terser": "^0.4.4",
+    "@types/node": "^20.8.2",
+    "@types/react": "18.2.0",
+    "@types/react-dom": "18.2.0",
+    "rollup-plugin-ts": "^3.4.5"
+  }
+}
