@@ -1,7 +1,6 @@
 import { jsx, jsxs } from 'react/jsx-runtime';
 import { useState, useRef, useLayoutEffect, Fragment, createContext, useContext, memo, useImperativeHandle, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { useLocation } from 'react-router-dom';
 
 /******************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -160,61 +159,35 @@ var KeepAlive = memo(function KeepAlive(props) {
                 }) })] }));
 });
 
-function useOnActiveByName(cb, config) {
-    var name = config.name, skipMount = config.skipMount;
-    var activeName = useKeepAliveContext().activeName;
-    var isMount = useRef(false);
-    useEffect(function () {
-        var destroyCb;
-        if (activeName === name) {
-            if (skipMount) {
-                if (isMount.current)
-                    destroyCb = cb();
-            }
-            else {
-                destroyCb = cb();
-            }
-            isMount.current = true;
-            return function () {
-                if (destroyCb && typeof destroyCb === "function") {
-                    destroyCb();
-                }
-            };
-        }
-    }, [activeName]);
-}
-function useOnActive(cb, skipMount) {
+var useOnActive = function (cb, skipMount) {
     if (skipMount === void 0) { skipMount = true; }
     var domRef = useRef(null);
-    var location = useLocation();
+    var activeName = useKeepAliveContext().activeName;
     var isMount = useRef(false);
     useEffect(function () {
         var _a;
         var destroyCb;
-        if (domRef.current) {
-            var parent_1 = (_a = domRef.current) === null || _a === void 0 ? void 0 : _a.parentElement;
-            if (parent_1) {
-                var id = parent_1.id;
-                var fullPath = location.pathname + location.search;
-                if (id === fullPath) {
-                    if (skipMount) {
-                        if (isMount.current)
-                            destroyCb = cb();
-                    }
-                    else {
+        var parent = (_a = domRef.current) === null || _a === void 0 ? void 0 : _a.parentElement;
+        var name = parent === null || parent === void 0 ? void 0 : parent.id;
+        if (parent && name) {
+            if (activeName === name) {
+                if (skipMount) {
+                    if (isMount.current)
                         destroyCb = cb();
-                    }
                 }
+                else {
+                    destroyCb = cb();
+                }
+                isMount.current = true;
+                return function () {
+                    if (destroyCb && typeof destroyCb === "function") {
+                        destroyCb();
+                    }
+                };
             }
         }
-        isMount.current = true;
-        return function () {
-            if (destroyCb && typeof destroyCb === "function") {
-                destroyCb();
-            }
-        };
-    }, [location]);
+    }, [activeName]);
     return domRef;
-}
+};
 
-export { KeepAlive as default, useOnActive, useOnActiveByName };
+export { KeepAlive as default, useOnActive };

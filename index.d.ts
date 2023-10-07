@@ -35,6 +35,4 @@ export declare class KeepAlive extends Component<KeepAliveProps> {
 
 export function useOnActive(cb: () => any, skipMount?: boolean): RefObject<HTMLDivElement>
 
-export function useOnActiveByName(cb: () => any, config: { name: string, skipMount?: boolean }): void
-
 export default KeepAlive

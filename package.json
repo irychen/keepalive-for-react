@@ -1,6 +1,6 @@
 {
-  "name": "react-keepalive",
-  "version": "1.0.0",
+  "name": "keepalive-for-react",
+  "version": "1.0.1",
   "description": "a react keepalive component",
   "main": "index.js",
   "scripts": {
@@ -11,7 +11,8 @@
   "keywords": [
     "react",
     "keepalive",
-    "react-keepalive"
+    "react-keepalive",
+    "cache-component"
   ],
   "author": "wongyichen",
   "license": "MIT",
@@ -21,7 +22,6 @@
     "@rollup/plugin-typescript": "^11.1.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.16.0",
     "rollup": "^4.0.2",
     "tslib": "^2.6.2",
     "typescript": "^5.2.2"
