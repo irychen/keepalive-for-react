@@ -25,30 +25,81 @@ yarn add keepalive-for-react
 pnpm add keepalive-for-react 
 ```
 
-### Example for Router
+### Example for Simple Usage
 
-```jsx
-import React from 'react';
-import KeepAlive, { KeepAliveRef } from "keepalive-for-react"
-import { useOnActiveByName, useOnActive } from "react-keepalive"
-import { useLocation, useNavigate, useRoutes } from "react-router-dom"
+```tsx
+import { Card, Input, Tabs } from "antd"
+import { useMemo, useState } from "react"
+import KeepAlive, { useOnActive } from "keepalive-for-react"
 
-function Layout(){
-    const keepAliveRef = useRef<KeepAliveRef>(null)
-    const location = useLocation()
-    const ele = useRoutes(routes, location)
-    
-    return <div className={'layout'}>
-        <KeepAlive
-            aliveRef={keepAliveRef}
-            cache={matchRouteObj?.cache}
-            activeName={activeKey}
-            maxLen={20}
-        >
-            {ele}
-        </KeepAlive>
-    </div>
+function KeepAliveDemo() {
+    const [activeName, setActiveName] = useState("TabA")
+    const showTabs = [
+        {
+            name: "TabA",
+            component: TabA,
+            cache: true,
+        },
+        {
+            name: "TabB",
+            component: TabB,
+            cache: false,
+        },
+    ]
+    const currentTab = useMemo(() => {
+        return showTabs.find(item => item.name === activeName)!
+    }, [activeName])
+
+    return (
+        <Card title={"KeepAliveDemo (无Router示例)"}>
+            <Tabs
+                activeKey={activeName}
+                onChange={activeKey => {
+                    setActiveName(activeKey)
+                }}
+                items={showTabs.map(item => {
+                    return {
+                        label: item.name,
+                        key: item.name,
+                    }
+                })}
+            ></Tabs>
+            <KeepAlive activeName={activeName} cache={currentTab.cache}>
+                {<currentTab.component />}
+            </KeepAlive>
+        </Card>
+    )
 }
+
+function TabA() {
+    const domRef = useOnActive(() => {
+        console.log("TabA onActive") // this will be trigger when tabA is active
+    })
+    return (
+        <div ref={domRef}>
+            <h1 className={"py-[15px] font-bold"}>TabA cached</h1>
+            <Input placeholder="输入一个值 然后切换tab组件不会被销毁"></Input>
+        </div>
+    )
+}
+
+function TabB() {
+    const domRef = useOnActive(() => {
+        console.log("TabB onActive") // no cache won't trigger onActive
+    })
+    return (
+        <div ref={domRef}>
+            <h1 className={"py-[15px] font-bold"}>TabB nocache</h1>
+            <Input placeholder="输入一个值 然后切换tab组件会被销毁"></Input>
+        </div>
+    )
+}
+
+export default KeepAliveDemo
 ```
 
-         
+### Example for Router
+
+Please see layout component [admin example](https://github.com/irychen/super-admin/blob/main/src/layout/index.tsx)
+
+also see [super admin](https://github.com/irychen/super-admin)
