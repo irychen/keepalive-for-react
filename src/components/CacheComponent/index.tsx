@@ -1,6 +1,6 @@
-import {Fragment, RefObject, useLayoutEffect, useRef, useState} from "react"
-import {ComponentReactElement} from "../KeepAlive"
-import {createPortal} from "react-dom"
+import { Fragment, RefObject, useLayoutEffect, useRef, useState } from "react"
+import { ComponentReactElement } from "../KeepAlive"
+import { createPortal } from "react-dom"
 interface CacheComponentProps extends ComponentReactElement {
     active: boolean
     name: string
@@ -8,7 +8,7 @@ interface CacheComponentProps extends ComponentReactElement {
     cache?: boolean
 }
 
-function CacheComponent({active, cache, children, name, renderDiv}: CacheComponentProps) {
+function CacheComponent({ active, cache, children, name, renderDiv }: CacheComponentProps) {
     const [targetElement] = useState(() => {
         const container = document.createElement("div")
         container.setAttribute("id", name)

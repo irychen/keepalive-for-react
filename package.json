@@ -4,6 +4,7 @@
   "description": "a react keepalive component",
   "main": "index.js",
   "scripts": {
+    "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "rollup --config rollup.config.ts --configPlugin typescript"
   },
@@ -16,6 +17,7 @@
   "license": "MIT",
   "dependencies": {
     "@rollup/plugin-babel": "^6.0.4",
+    "@rollup/plugin-commonjs": "^25.0.5",
     "@rollup/plugin-typescript": "^11.1.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -35,6 +37,7 @@
     "@types/node": "^20.8.2",
     "@types/react": "18.2.0",
     "@types/react-dom": "18.2.0",
+    "prettier": "^3.0.3",
     "rollup-plugin-ts": "^3.4.5"
   }
 }

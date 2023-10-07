@@ -1,6 +1,7 @@
-import type {ReactNode, RefObject} from "react"
-import {Fragment, memo, useImperativeHandle, useLayoutEffect, useRef, useState} from "react"
+import type { ReactNode, RefObject } from "react"
+import { Fragment, memo, useImperativeHandle, useLayoutEffect, useRef, useState } from "react"
 import CacheComponent from "../CacheComponent"
+import KeepAliveProvider from "../KeepAliveProvider"
 
 function isNil(value: any) {
     return value === null || value === undefined
@@ -37,12 +38,15 @@ interface Props extends ComponentReactElement {
 }
 
 const KeepAlive = memo(function KeepAlive(props: Props) {
-    const {activeName, cache, children, exclude, include, maxLen, aliveRef} = props
+    const { activeName, cache, children, exclude, include, maxLen, aliveRef } = props
     const containerRef = useRef<HTMLDivElement>(null)
-    const [cacheReactNodes, setCacheReactNodes] = useState<Array<{
-        name: string; ele?: ReactNode
-        cache: boolean
-    }>>([])
+    const [cacheReactNodes, setCacheReactNodes] = useState<
+        Array<{
+            name: string
+            ele?: ReactNode
+            cache: boolean
+        }>
+    >([])
 
     useImperativeHandle(
         aliveRef,
@@ -61,7 +65,7 @@ const KeepAlive = memo(function KeepAlive(props: Props) {
             },
             cleanOtherCache: () => {
                 setCacheReactNodes(cacheReactNodes => {
-                    return cacheReactNodes.filter(({name}) => name === activeName)
+                    return cacheReactNodes.filter(({ name }) => name === activeName)
                 })
             },
         }),
@@ -78,20 +82,26 @@ const KeepAlive = memo(function KeepAlive(props: Props) {
             }
             // remove exclude
             if (exclude && exclude.length > 0) {
-                cacheReactNodes = cacheReactNodes.filter(({name}) => !exclude?.includes(name))
+                cacheReactNodes = cacheReactNodes.filter(({ name }) => !exclude?.includes(name))
             }
             // only keep include
             if (include && include.length > 0) {
-                cacheReactNodes = cacheReactNodes.filter(({name}) => include?.includes(name))
+                cacheReactNodes = cacheReactNodes.filter(({ name }) => include?.includes(name))
             }
             // remove cache false
-            cacheReactNodes = cacheReactNodes.filter(({cache}) => cache)
+            cacheReactNodes = cacheReactNodes.filter(({ cache }) => cache)
             const cacheReactNode = cacheReactNodes.find(res => res.name === activeName)
             if (isNil(cacheReactNode)) {
                 cacheReactNodes.push({
                     cache: cache ?? true,
                     name: activeName,
                     ele: children,
+                })
+            } else {
+                // important update children when activeName is same
+                // this can trigger children onActive
+                cacheReactNodes = cacheReactNodes.map(res => {
+                    return res.name === activeName ? { ...res, ele: children } : res
                 })
             }
             return cacheReactNodes
@@ -100,16 +110,20 @@ const KeepAlive = memo(function KeepAlive(props: Props) {
 
     return (
         <Fragment>
-            <div ref={containerRef} className="keep-alive"/>
-            {
-                cacheReactNodes?.map(({name, cache, ele}) => (
-                        <CacheComponent cache={cache} active={name === activeName} renderDiv={containerRef} name={name}
-                                        key={name}>
-                            {ele}
-                        </CacheComponent>
-                    )
-                )
-            }
+            <div ref={containerRef} className="keep-alive" />
+            <KeepAliveProvider initialActiveName={activeName}>
+                {cacheReactNodes?.map(({ name, cache, ele }) => (
+                    <CacheComponent
+                        active={name === activeName}
+                        renderDiv={containerRef}
+                        cache={cache}
+                        name={name}
+                        key={name}
+                    >
+                        {ele}
+                    </CacheComponent>
+                ))}
+            </KeepAliveProvider>
         </Fragment>
     )
 })
