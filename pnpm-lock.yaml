@@ -20,9 +20,6 @@ dependencies:
   react-dom:
     specifier: ^18.2.0
     version: 18.2.0(react@18.2.0)
-  react-router-dom:
-    specifier: ^6.16.0
-    version: 6.16.0(react-dom@18.2.0)(react@18.2.0)
   rollup:
     specifier: ^4.0.2
     version: 4.0.2
@@ -1314,11 +1311,6 @@ packages:
     resolution: {integrity: sha512-UoZWTHXYXPm0AOcCgmbeirzJqE3fZ2P16qAs9kgMpckw67yCsYgdrQ2NqhlxJYpe6h/62I10+uX8xUZjwTp1sA==}
     dev: true
 
-  /@remix-run/router@1.9.0:
-    resolution: {integrity: sha512-bV63itrKBC0zdT27qYm6SDZHlkXwFL1xMBuhkn+X7l0+IIhNaH5wuuvZKp6eKhCD4KFhujhfhCT1YxXW6esUIA==}
-    engines: {node: '>=14.0.0'}
-    dev: false
-
   /@rollup/plugin-babel@6.0.4(@babel/core@7.23.0)(rollup@4.0.2):
     resolution: {integrity: sha512-YF7Y52kFdFT/xVSuVdjkV5ZdX/3YtmX0QulG+x0taQOtJdHYzVU61aSSkAgVJ7NOv6qPkIYiJSgSWWN/DM5sGw==}
     engines: {node: '>=14.0.0'}
@@ -1951,29 +1943,6 @@ packages:
       loose-envify: 1.4.0
       react: 18.2.0
       scheduler: 0.23.0
-    dev: false
-
-  /react-router-dom@6.16.0(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-aTfBLv3mk/gaKLxgRDUPbPw+s4Y/O+ma3rEN1u8EgEpLpPe6gNjIsWt9rxushMHHMb7mSwxRGdGlGdvmFsyPIg==}
-    engines: {node: '>=14.0.0'}
-    peerDependencies:
-      react: '>=16.8'
-      react-dom: '>=16.8'
-    dependencies:
-      '@remix-run/router': 1.9.0
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-      react-router: 6.16.0(react@18.2.0)
-    dev: false
-
-  /react-router@6.16.0(react@18.2.0):
-    resolution: {integrity: sha512-VT4Mmc4jj5YyjpOi5jOf0I+TYzGpvzERy4ckNSvSh2RArv8LLoCxlsZ2D+tc7zgjxcY34oTz2hZaeX5RVprKqA==}
-    engines: {node: '>=14.0.0'}
-    peerDependencies:
-      react: '>=16.8'
-    dependencies:
-      '@remix-run/router': 1.9.0
-      react: 18.2.0
     dev: false
 
   /react@18.2.0:

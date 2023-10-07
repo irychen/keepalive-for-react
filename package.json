@@ -1,6 +1,6 @@
 {
   "name": "keepalive-for-react",
-  "version": "1.0.3",
+  "version": "1.0.5",
   "description": "a react keepalive component",
   "main": "index.js",
   "homepage": "https://github.com/irychen/keepalive-for-react",
@@ -14,10 +14,11 @@
     "build": "rollup --config rollup.config.ts --configPlugin typescript"
   },
   "keywords": [
-    "react",
-    "keepalive",
-    "react-keepalive",
-    "cache-component"
+    "KeepAlive",
+    "React Keepalive",
+    "React Keep Alive",
+    "cache component",
+    "mutiple tabs"
   ],
   "author": "wongyichen",
   "license": "MIT",

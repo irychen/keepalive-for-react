@@ -25,6 +25,12 @@ yarn add keepalive-for-react
 pnpm add keepalive-for-react 
 ```
 
+### Example for Router ( complex usage )
+
+Please see layout component [admin example](https://github.com/irychen/super-admin/blob/main/src/layout/index.tsx)
+
+also see [super admin](https://github.com/irychen/super-admin)
+
 ### Example for Simple Usage
 
 ```tsx
@@ -98,8 +104,3 @@ function TabB() {
 export default KeepAliveDemo
 ```
 
-### Example for Router
-
-Please see layout component [admin example](https://github.com/irychen/super-admin/blob/main/src/layout/index.tsx)
-
-also see [super admin](https://github.com/irychen/super-admin)
