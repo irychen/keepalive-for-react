@@ -3,7 +3,7 @@ import babel from '@rollup/plugin-babel';
 import typescript from "@rollup/plugin-typescript";
 import {nodeResolve} from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
-// import terser from '@rollup/plugin-terser';
+import terser from '@rollup/plugin-terser';
 // import ts from 'rollup-plugin-ts'
 // import pkg from './package.json' assert {type: "json"};
 
@@ -24,7 +24,8 @@ const config: RollupOptions[] = [
                 presets: ['@babel/preset-env', '@babel/preset-react'],
             }),
             typescript(),
-            commonjs()
+            commonjs(),
+            terser(),
         ],
     },
 ];
