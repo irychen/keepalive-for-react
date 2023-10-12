@@ -33,6 +33,8 @@ also see [super admin](https://github.com/irychen/super-admin)
 
 ### Example for Simple Usage
 
+[Link: codesandbox Demo](https://codesandbox.io/s/keepaliev-simple-demo-8tkp63?file=/src/App.js)
+
 ```tsx
 import { Card, Input, Tabs } from "antd"
 import { useMemo, useState } from "react"

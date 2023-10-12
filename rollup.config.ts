@@ -13,9 +13,9 @@ const config: RollupOptions[] = [
         output: {
             file:'index.js',
             exports: 'named',
-            format: 'es',
+            format: 'esm',
         },
-        external: ['react', 'react-dom', 'react/jsx-runtime'],
+        external: ['react', 'react-dom'],
         plugins: [
             nodeResolve(),
             babel({

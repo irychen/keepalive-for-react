@@ -1,6 +1,6 @@
 {
   "name": "keepalive-for-react",
-  "version": "1.0.6",
+  "version": "1.0.7-0",
   "description": "a react keepalive component",
   "main": "index.js",
   "homepage": "https://github.com/irychen/keepalive-for-react",
@@ -22,28 +22,29 @@
   ],
   "author": "wongyichen",
   "license": "MIT",
-  "dependencies": {
-    "@rollup/plugin-babel": "^6.0.4",
-    "@rollup/plugin-commonjs": "^25.0.5",
-    "@rollup/plugin-typescript": "^11.1.5",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "rollup": "^4.0.2",
-    "tslib": "^2.6.2",
-    "typescript": "^5.2.2"
+  "peerDependencies": {
+    "react": ">=16.8.0",
+    "react-dom": ">=16.8.0"
   },
   "devDependencies": {
     "@babel/core": "^7.23.0",
     "@babel/plugin-transform-runtime": "^7.22.15",
     "@babel/preset-env": "^7.22.20",
+    "@babel/preset-react": "^7.22.15",
     "@babel/preset-typescript": "^7.23.0",
     "@babel/runtime": "^7.23.1",
+    "@rollup/plugin-babel": "^6.0.4",
+    "@rollup/plugin-commonjs": "^25.0.5",
     "@rollup/plugin-node-resolve": "^15.2.2",
     "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^11.1.5",
     "@types/node": "^20.8.2",
     "@types/react": "18.2.0",
     "@types/react-dom": "18.2.0",
     "prettier": "^3.0.3",
-    "rollup-plugin-ts": "^3.4.5"
+    "rollup": "^4.0.2",
+    "rollup-plugin-ts": "^3.4.5",
+    "tslib": "^2.6.2",
+    "typescript": "^5.2.2"
   }
 }
