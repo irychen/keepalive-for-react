@@ -6,6 +6,14 @@
 
 React KeepAlive is a component that can cache the state of the component and reuse it when needed.
 
+## Features
+
+- support for caching component state
+- simply implement, without any extra dependencies and hacking ways
+- support for custom cache rules
+- high performance, no performance loss
+- easy to use, just wrap the component you want to cache
+
 ## Usage
 
 ### Install
@@ -35,12 +43,15 @@ also see [super admin](https://github.com/irychen/super-admin)
 
 [Link: codesandbox Demo](https://codesandbox.io/s/keepaliev-simple-demo-8tkp63?file=/src/App.js)
 
+![preview](./demo-simple-keepalive.gif)
+
 ```tsx
 import { Card, Input, Tabs } from "antd"
 import { useMemo, useState } from "react"
 import KeepAlive, { useOnActive } from "keepalive-for-react"
 
 function KeepAliveDemo() {
+    const keepAliveRef = useRef<KeepAliveRef>(null)
     const [activeName, setActiveName] = useState("TabA")
     const showTabs = [
         {
@@ -54,9 +65,26 @@ function KeepAliveDemo() {
             cache: false,
         },
     ]
+  
     const currentTab = useMemo(() => {
         return showTabs.find(item => item.name === activeName)!
     }, [activeName])
+  
+    const clearAllCache = () => {
+        keepAliveRef.current?.cleanAllCache()
+    }
+    
+    const getCaches = () => {
+        console.log(keepAliveRef.current?.getCaches())
+    }
+    
+    const removeCache = () => {
+        keepAliveRef.current?.removeCache("TabA")
+    }
+    
+    const cleanOtherCache = () => {
+        keepAliveRef.current?.cleanOtherCache()
+    }
 
     return (
         <Card title={"KeepAliveDemo (无Router示例)"}>
@@ -72,7 +100,10 @@ function KeepAliveDemo() {
                     }
                 })}
             ></Tabs>
-            <KeepAlive activeName={activeName} cache={currentTab.cache}>
+            <KeepAlive
+              aliveRef={keepAliveRef}
+              activeName={activeName} 
+              cache={currentTab.cache}>
                 {<currentTab.component />}
             </KeepAlive>
         </Card>
