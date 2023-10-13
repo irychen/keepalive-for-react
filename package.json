@@ -1,13 +1,17 @@
 {
   "name": "keepalive-for-react",
-  "version": "1.0.9",
-  "description": "a react keepalive component",
+  "version": "1.0.11",
+  "description": "A react <KeepAlive/> component like <keep-alive/> in vue, it can cache component state when component unmount, and restore state when component mount again.",
   "main": "index.js",
   "homepage": "https://github.com/irychen/keepalive-for-react",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/irychen/keepalive-for-react.git"
   },
+  "files": [
+    "index.js",
+    "index.d.ts"
+  ],
   "scripts": {
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -15,10 +19,17 @@
   },
   "keywords": [
     "KeepAlive",
+    "keepalive",
+    "Keep Alive",
+    "keep-alive",
     "React Keepalive",
+    "react keepalive",
     "React Keep Alive",
     "cache component",
-    "mutiple tabs"
+    "mutiple tabs",
+    "keepalive for react",
+    "keep-alive for react",
+    "keepalive-for-react"
   ],
   "author": "wongyichen",
   "license": "MIT",
