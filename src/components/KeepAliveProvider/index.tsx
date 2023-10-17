@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useContext, useLayoutEffect, useState } from "react"
+import {createContext, memo, ReactNode, useContext, useLayoutEffect, useState} from "react"
 
 export interface KeepAliveContextProps {
     activeName: string | undefined
@@ -25,4 +25,4 @@ function KeepAliveProvider(props: { children?: ReactNode; initialActiveName?: st
     return <KeepAliveContext.Provider value={{ activeName, setActiveName }}>{children}</KeepAliveContext.Provider>
 }
 
-export default KeepAliveProvider
+export default memo(KeepAliveProvider)

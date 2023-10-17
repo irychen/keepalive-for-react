@@ -1,4 +1,4 @@
-import { Fragment, RefObject, useLayoutEffect, useRef, useState } from "react"
+import {Fragment, memo, RefObject, useLayoutEffect, useRef, useState} from "react"
 import { ComponentReactElement } from "../KeepAlive"
 import { createPortal } from "react-dom"
 interface CacheComponentProps extends ComponentReactElement {
@@ -31,4 +31,4 @@ function CacheComponent({ active, cache, children, name, renderDiv }: CacheCompo
     return <Fragment>{activatedRef.current && createPortal(children, targetElement)}</Fragment>
 }
 
-export default CacheComponent
+export default memo(CacheComponent)

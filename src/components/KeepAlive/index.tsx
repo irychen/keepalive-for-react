@@ -128,4 +128,4 @@ const KeepAlive = memo(function KeepAlive(props: Props) {
     )
 })
 
-export default KeepAlive
+export default memo(KeepAlive)
