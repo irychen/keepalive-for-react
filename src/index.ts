@@ -2,7 +2,7 @@ import KeepAlive from "./components/KeepAlive"
 import { useEffect, useRef } from "react"
 import { useKeepAliveContext } from "./components/KeepAliveProvider"
 
-export const useOnActive = (cb: () => any, skipMount = true) => {
+const useOnActive = (cb: () => any, skipMount = true) => {
     const domRef = useRef<HTMLDivElement>(null)
     const { activeName } = useKeepAliveContext()
     const isMount = useRef(false)
@@ -28,5 +28,7 @@ export const useOnActive = (cb: () => any, skipMount = true) => {
     }, [activeName])
     return domRef
 }
+
+export { KeepAlive, useOnActive }
 
 export default KeepAlive
