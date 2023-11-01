@@ -1,4 +1,4 @@
-import {Fragment, memo, RefObject, useLayoutEffect, useRef, useState} from "react"
+import { Fragment, memo, RefObject, useLayoutEffect, useRef, useState } from "react"
 import { ComponentReactElement } from "../KeepAlive"
 import { createPortal } from "react-dom"
 interface CacheComponentProps extends ComponentReactElement {
@@ -18,11 +18,14 @@ function CacheComponent({ active, cache, children, name, renderDiv }: CacheCompo
     const activatedRef = useRef(false)
     activatedRef.current = activatedRef.current || active
     useLayoutEffect(() => {
+        const keepAliveDiv = renderDiv.current
         if (active) {
-            renderDiv.current?.appendChild(targetElement)
+            keepAliveDiv?.appendChild(targetElement)
         } else {
             try {
-                renderDiv.current?.removeChild(targetElement)
+                if (keepAliveDiv?.contains(targetElement)) {
+                    keepAliveDiv?.removeChild(targetElement)
+                }
             } catch (e) {
                 console.log(e, "removeChild error")
             }
