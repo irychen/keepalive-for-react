@@ -4,7 +4,7 @@
 
 ## introduction
 
-A React <KeepAlive/> component like <keep-alive/> in vue
+A React KeepAlive component like keep-alive in vue
 
 ## Features
 
