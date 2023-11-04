@@ -1,14 +1,18 @@
-import { Fragment, memo, RefObject, useLayoutEffect, useRef, useState } from "react"
+import { ComponentType, Fragment, memo, RefObject, useLayoutEffect, useRef, useState } from "react"
 import { ComponentReactElement } from "../KeepAlive"
 import { createPortal } from "react-dom"
+import { isNil } from "../../utils"
+
 interface CacheComponentProps extends ComponentReactElement {
     active: boolean
     name: string
     renderDiv: RefObject<HTMLDivElement>
     cache?: boolean
+    errorElement?: ComponentType<any> | null
 }
 
-function CacheComponent({ active, cache, children, name, renderDiv }: CacheComponentProps) {
+function CacheComponent({ active, errorElement, cache, children, name, renderDiv }: CacheComponentProps) {
+    const ErrorElement = errorElement as ComponentType<any>
     const [targetElement] = useState(() => {
         const container = document.createElement("div")
         container.setAttribute("id", name)
@@ -31,7 +35,16 @@ function CacheComponent({ active, cache, children, name, renderDiv }: CacheCompo
             }
         }
     }, [active, renderDiv, targetElement, children])
-    return <Fragment>{activatedRef.current && createPortal(children, targetElement)}</Fragment>
+
+    if (!isNil(ErrorElement)) {
+        return (
+            <Fragment>
+                {activatedRef.current && createPortal(<ErrorElement>{children}</ErrorElement>, targetElement)}
+            </Fragment>
+        )
+    } else {
+        return <Fragment>{activatedRef.current && createPortal(children, targetElement)}</Fragment>
+    }
 }
 
 export default memo(CacheComponent)

@@ -4,10 +4,11 @@
 
 ## introduction
 
-React KeepAlive is a component that can cache the state of the component and reuse it when needed.
+A React <KeepAlive/> component like <keep-alive/> in vue
 
 ## Features
 
+- dramatically reduce the number of dom elements in the page
 - support for caching component state
 - simply implement, without any extra dependencies and hacking ways
 - support for custom cache rules

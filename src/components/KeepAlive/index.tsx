@@ -1,11 +1,8 @@
-import type { ReactNode, RefObject } from "react"
+import type { ComponentType, ReactNode, RefObject } from "react"
 import { Fragment, memo, useImperativeHandle, useLayoutEffect, useRef, useState } from "react"
 import CacheComponent from "../CacheComponent"
 import KeepAliveProvider from "../KeepAliveProvider"
-
-function isNil(value: any) {
-    return value === null || value === undefined
-}
+import { isNil } from "../../utils"
 
 export interface ComponentReactElement {
     children?: ReactNode | ReactNode[]
@@ -35,10 +32,11 @@ interface Props extends ComponentReactElement {
     maxLen?: number
     cache?: boolean
     aliveRef?: RefObject<KeepAliveRef>
+    errorElement?: ComponentType<any> | null
 }
 
 const KeepAlive = memo(function KeepAlive(props: Props) {
-    const { activeName, cache, children, exclude, include, maxLen, aliveRef } = props
+    const { errorElement, activeName, cache, children, exclude, include, maxLen, aliveRef } = props
     const containerRef = useRef<HTMLDivElement>(null)
     const [cacheReactNodes, setCacheReactNodes] = useState<
         Array<{
@@ -114,6 +112,7 @@ const KeepAlive = memo(function KeepAlive(props: Props) {
             <KeepAliveProvider initialActiveName={activeName}>
                 {cacheReactNodes?.map(({ name, cache, ele }) => (
                     <CacheComponent
+                        errorElement={errorElement}
                         active={name === activeName}
                         renderDiv={containerRef}
                         cache={cache}

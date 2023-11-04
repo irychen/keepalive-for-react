@@ -1,4 +1,4 @@
-import {ReactNode, ReactElement, JSXElementConstructor, RefObject } from 'react'
+import {ReactNode,ComponentClass, ReactElement, JSXElementConstructor, RefObject, ComponentType} from 'react'
 
 export interface ComponentReactElement {
     children?: ReactNode | ReactNode[] | ReactElement<any, string | JSXElementConstructor<any>> | null | undefined | any
@@ -28,6 +28,7 @@ interface KeepAliveProps extends ComponentReactElement {
     maxLen?: number
     cache?: boolean
     aliveRef?: RefObject<KeepAliveRef>
+    errorElement?:  ComponentType<any> | null
     children?: ReactNode | ReactNode[] | ReactElement<any, string | JSXElementConstructor<any>> | null | undefined | any
 }
 
