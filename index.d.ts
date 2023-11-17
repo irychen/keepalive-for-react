@@ -36,4 +36,6 @@ const KeepAlive = (props: KeepAliveProps) => JSX.Element
 
 export function useOnActive(cb: () => any, skipMount?: boolean): RefObject<HTMLDivElement>
 
+export function useOnActiveByRef(ref: RefObject<HTMLDivElement>, cb: () => any, skipMount?: boolean): void
+
 export default KeepAlive

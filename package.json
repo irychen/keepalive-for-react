@@ -1,6 +1,6 @@
 {
   "name": "keepalive-for-react",
-  "version": "1.0.18",
+  "version": "1.0.19",
   "description": "A react <KeepAlive/> component like <keep-alive/> in vue, it can cache component state when component unmount, and restore state when component mount again.",
   "main": "index.js",
   "homepage": "https://github.com/irychen/keepalive-for-react",
