@@ -6,6 +6,10 @@
 
 A React KeepAlive component like keep-alive in vue
 
+### Attention !
+
+DO NOT use <React.StrictMode />, it CANNOT work with keepalive-for-react in development mode. because it can lead to some unexpected behavior when you use keepalive-for-react's useOnActive hook.
+
 ## Features
 
 - dramatically reduce the number of dom elements in the page
