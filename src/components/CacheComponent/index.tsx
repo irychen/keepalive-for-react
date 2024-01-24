@@ -1,7 +1,7 @@
 import { ComponentType, Fragment, memo, RefObject, useLayoutEffect, useRef, useState } from "react"
 import { ComponentReactElement } from "../KeepAlive"
 import { createPortal } from "react-dom"
-import { isNil } from "../../utils"
+import { isNil } from "fortea"
 
 interface CacheComponentProps extends ComponentReactElement {
     active: boolean
@@ -14,21 +14,21 @@ interface CacheComponentProps extends ComponentReactElement {
 function CacheComponent({ active, errorElement, cache, children, name, renderDiv }: CacheComponentProps) {
     const ErrorElement = errorElement as ComponentType<any>
     const [targetElement] = useState(() => {
-        const container = document.createElement("div")
-        container.setAttribute("id", name)
-        container.className = "cache-component " + name + " " + (cache ? "cached" : "no-cache")
-        return container
+        const cacheDiv = document.createElement("div")
+        cacheDiv.setAttribute("id", name)
+        cacheDiv.className = "cache-component " + name + " " + (cache ? "cached" : "no-cache")
+        return cacheDiv
     })
     const activatedRef = useRef(false)
     activatedRef.current = activatedRef.current || active
     useLayoutEffect(() => {
-        const keepAliveDiv = renderDiv.current
+        const containerDiv = renderDiv.current
         if (active) {
-            keepAliveDiv?.appendChild(targetElement)
+            containerDiv?.appendChild(targetElement)
         } else {
             try {
-                if (keepAliveDiv?.contains(targetElement)) {
-                    keepAliveDiv?.removeChild(targetElement)
+                if (containerDiv?.contains(targetElement)) {
+                    containerDiv?.removeChild(targetElement)
                 }
             } catch (e) {
                 console.log(e, "removeChild error")
@@ -36,15 +36,17 @@ function CacheComponent({ active, errorElement, cache, children, name, renderDiv
         }
     }, [active, renderDiv, targetElement, children])
 
-    if (!isNil(ErrorElement)) {
+    if (isNil(ErrorElement)) {
+        return <Fragment>{activatedRef.current && createPortal(children, targetElement)}</Fragment>
+    } else {
         return (
             <Fragment>
                 {activatedRef.current && createPortal(<ErrorElement>{children}</ErrorElement>, targetElement)}
             </Fragment>
         )
-    } else {
-        return <Fragment>{activatedRef.current && createPortal(children, targetElement)}</Fragment>
     }
 }
 
-export default memo(CacheComponent)
+export default memo(CacheComponent, (prevProps, nextProps) => {
+    return prevProps.active === nextProps.active
+})

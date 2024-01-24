@@ -1,6 +1,6 @@
 {
   "name": "keepalive-for-react",
-  "version": "1.0.21",
+  "version": "1.0.22",
   "description": "A react <KeepAlive/> component like <keep-alive/> in vue, it can cache component state when component unmount, and restore state when component mount again.",
   "main": "index.js",
   "homepage": "https://github.com/irychen/keepalive-for-react",
@@ -12,6 +12,11 @@
     "index.js",
     "index.d.ts"
   ],
+  "lint-staged": {
+    "src/**/*.{js,ts,tsx}": [
+      "prettier --write"
+    ]
+  },
   "scripts": {
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -57,5 +62,8 @@
     "rollup-plugin-ts": "^3.4.5",
     "tslib": "^2.6.2",
     "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "fortea": "^1.0.2"
   }
 }

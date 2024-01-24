@@ -12,6 +12,7 @@ DO NOT use <React.StrictMode />, it CANNOT work with keepalive-for-react in deve
 
 ## Features
 
+- support react 16.8+ ~ 18+
 - dramatically reduce the number of dom elements in the page
 - support for caching component state
 - simply implement, without any extra dependencies and hacking ways

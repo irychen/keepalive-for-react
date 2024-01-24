@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  fortea:
+    specifier: ^1.0.2
+    version: 1.0.2
   react:
     specifier: '>=16.8.0'
     version: 18.2.0
@@ -1867,6 +1870,10 @@ packages:
     resolution: {integrity: sha512-kVscqXk4OCp68SZ0dkgEKVi6/8ij300KBWTJq32P/dYeWTSwK41WyTxalN1eRmA5Z9UU/LX9D7FWSmV9SAYx6g==}
     engines: {node: '>=0.10.0'}
     dev: true
+
+  /fortea@1.0.2:
+    resolution: {integrity: sha512-bLI/1qZeBgO8Ohx/CUmMcFI1sYilcmmagJumf+z62lBnjpZjauivlQDXewEiZWxSEy/eudhO0ZVELPnMbGIipg==}
+    dev: false
 
   /fs.realpath@1.0.0:
     resolution: {integrity: sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw==}

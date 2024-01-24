@@ -29,6 +29,7 @@ interface KeepAliveProps extends ComponentReactElement {
     cache?: boolean
     aliveRef?: RefObject<KeepAliveRef>
     errorElement?:  ComponentType<any> | null
+    suspenseElement?: ComponentType<any> | null
     children?: ReactNode | ReactNode[] | ReactElement<any, string | JSXElementConstructor<any>> | null | undefined | any
 }
 

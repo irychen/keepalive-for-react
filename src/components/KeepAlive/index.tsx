@@ -2,7 +2,7 @@ import type { ComponentType, ReactNode, RefObject } from "react"
 import { Fragment, memo, useImperativeHandle, useLayoutEffect, useRef, useState } from "react"
 import CacheComponent from "../CacheComponent"
 import KeepAliveProvider from "../KeepAliveProvider"
-import { isNil } from "../../utils"
+import { isNil } from "fortea"
 
 export interface ComponentReactElement {
     children?: ReactNode | ReactNode[]
@@ -11,16 +11,16 @@ export interface ComponentReactElement {
 export type KeepAliveRef = {
     getCaches: () => Array<{ name: string; ele?: ReactNode }>
     /**
-     * 清除指定缓存
+     * 清除指定缓存 remove cache by name
      * @param name
      */
     removeCache: (name: string) => void
     /**
-     * 清除所有缓存
+     * 清除所有缓存 clean all cache
      */
     cleanAllCache: () => void
     /**
-     * 清除其他缓存 除了当前的
+     * 清除其他缓存 除了当前的 clean other cache except current
      */
     cleanOtherCache: () => void
 }
@@ -33,11 +33,19 @@ interface Props extends ComponentReactElement {
     cache?: boolean
     aliveRef?: RefObject<KeepAliveRef>
     errorElement?: ComponentType<any> | null
+    suspenseElement?: ComponentType<any> | null
 }
 
-const KeepAlive = memo(function KeepAlive(props: Props) {
-    const { errorElement, activeName, cache, children, exclude, include, maxLen, aliveRef } = props
-    const containerRef = useRef<HTMLDivElement>(null)
+const KeepAlive = memo(KeepAliveComp, (prevProps, nextProps) => {
+    return (
+        prevProps.activeName === nextProps.activeName
+    )
+})
+
+function KeepAliveComp(props: Props) {
+
+    const { errorElement, activeName, cache, suspenseElement, children, exclude, include, maxLen, aliveRef } = props
+    const renderDiv = useRef<HTMLDivElement>(null)
     const [cacheReactNodes, setCacheReactNodes] = useState<
         Array<{
             name: string
@@ -106,25 +114,49 @@ const KeepAlive = memo(function KeepAlive(props: Props) {
         })
     }, [children, cache, activeName, exclude, maxLen, include])
 
-    return (
-        <Fragment>
-            <div ref={containerRef} className="keep-alive" />
-            <KeepAliveProvider initialActiveName={activeName}>
-                {cacheReactNodes?.map(({ name, cache, ele }) => (
-                    <CacheComponent
-                        errorElement={errorElement}
-                        active={name === activeName}
-                        renderDiv={containerRef}
-                        cache={cache}
-                        name={name}
-                        key={name}
-                    >
-                        {ele}
-                    </CacheComponent>
-                ))}
-            </KeepAliveProvider>
-        </Fragment>
-    )
-})
+    const SuspenseElement = suspenseElement as ComponentType<any>
 
-export default memo(KeepAlive)
+    if (isNil(SuspenseElement)) {
+        return (
+            <Fragment>
+                <div ref={renderDiv} className="keep-alive" />
+                <KeepAliveProvider initialActiveName={activeName}>
+                    {cacheReactNodes?.map(({ name, cache, ele }) => (
+                        <CacheComponent
+                            errorElement={errorElement}
+                            active={name === activeName}
+                            renderDiv={renderDiv}
+                            cache={cache}
+                            name={name}
+                            key={name}
+                        >
+                            {ele}
+                        </CacheComponent>
+                    ))}
+                </KeepAliveProvider>
+            </Fragment>
+        )
+    } else {
+        return (
+            <SuspenseElement>
+                <div ref={renderDiv} className="keep-alive" />
+                <KeepAliveProvider initialActiveName={activeName}>
+                    {cacheReactNodes?.map(({ name, cache, ele }) => (
+                        <CacheComponent
+                            errorElement={errorElement}
+                            active={name === activeName}
+                            renderDiv={renderDiv}
+                            cache={cache}
+                            name={name}
+                            key={name}
+                        >
+                            {ele}
+                        </CacheComponent>
+                    ))}
+                </KeepAliveProvider>
+            </SuspenseElement>
+        )
+    }
+}
+
+export default KeepAlive
