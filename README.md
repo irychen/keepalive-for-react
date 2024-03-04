@@ -2,6 +2,8 @@
 
 [中文](./README.zh_CN.md) | English
 
+[![NPM version](https://img.shields.io/npm/v/keepalive-for-react.svg?style=flat)](https://npmjs.com/package/keepalive-for-react) [![NPM downloads](https://img.shields.io/npm/dm/keepalive-for-react.svg?style=flat)](https://npmjs.com/package/keepalive-for-react)
+
 ## introduction
 
 A React KeepAlive component like keep-alive in vue
