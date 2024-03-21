@@ -10,3 +10,11 @@ node_modules
 *.njsproj
 *.sln
 *.sw?
+
+dist
+
+
+# npm lockfile
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
