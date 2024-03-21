@@ -1,52 +1,68 @@
-import { ComponentType, Fragment, memo, RefObject, useLayoutEffect, useRef, useState } from "react"
-import { ComponentReactElement } from "../KeepAlive"
-import { createPortal } from "react-dom"
-import { isNil } from "fortea"
+import { ComponentType, ReactNode, RefObject, useCallback, useLayoutEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
+import MemoCacheComponentProvider from '../KeepaAliveProvider';
 
-interface CacheComponentProps extends ComponentReactElement {
-    active: boolean
-    name: string
-    renderDiv: RefObject<HTMLDivElement>
-    cache?: boolean
-    errorElement?: ComponentType<any> | null
+interface Props {
+    containerDivRef: RefObject<HTMLDivElement>;
+    active: boolean;
+    name: string;
+    errorElement?: ComponentType<any>;
+    children: ReactNode;
+    destroy: (name: string) => void;
 }
 
-function CacheComponent({ active, errorElement, cache, children, name, renderDiv }: CacheComponentProps) {
-    const ErrorElement = errorElement as ComponentType<any>
-    const [targetElement] = useState(() => {
-        const cacheDiv = document.createElement("div")
-        cacheDiv.setAttribute("id", name)
-        cacheDiv.className = "cache-component " + name + " " + (cache ? "cached" : "no-cache")
-        return cacheDiv
-    })
-    const activatedRef = useRef(false)
-    activatedRef.current = activatedRef.current || active
+function CacheComponent(props: Props) {
+    const { containerDivRef, active, children, destroy, name } = props;
+    const activatedRef = useRef(false);
+    const ErrorBoundary = props.errorElement;
+
+    activatedRef.current = activatedRef.current || active;
+
+    const [cacheDiv] = useState(() => {
+        const cacheDiv = document.createElement('div');
+        cacheDiv.setAttribute('data-name', name);
+        cacheDiv.className = `cache-component`;
+        return cacheDiv;
+    });
+
     useLayoutEffect(() => {
-        const containerDiv = renderDiv.current
+        const containerDiv = containerDivRef.current;
+
+        cacheDiv.classList.remove('active', 'inactive');
         if (active) {
-            containerDiv?.appendChild(targetElement)
+            containerDiv?.appendChild(cacheDiv);
+            cacheDiv.classList.add('active');
+            cacheDiv.setAttribute('data-active', 'true');
         } else {
-            try {
-                if (containerDiv?.contains(targetElement)) {
-                    containerDiv?.removeChild(targetElement)
-                }
-            } catch (e) {
-                console.log(e, "removeChild error")
+            if (containerDiv?.contains(cacheDiv)) {
+                cacheDiv.setAttribute('data-active', 'false');
+                cacheDiv.classList.add('inactive');
+                containerDiv?.removeChild(cacheDiv);
             }
         }
-    }, [active, renderDiv, targetElement, children])
+    }, [active, containerDivRef, cacheDiv]);
 
-    if (isNil(ErrorElement)) {
-        return <Fragment>{activatedRef.current && createPortal(children, targetElement)}</Fragment>
+    const cacheDestroy = useCallback(() => {
+        destroy(name);
+    }, [destroy, name]);
+
+
+    if (ErrorBoundary) {
+        return activatedRef.current ? createPortal(<ErrorBoundary>
+            <MemoCacheComponentProvider active={active} destroy={cacheDestroy}>
+                {children}
+            </MemoCacheComponentProvider>
+        </ErrorBoundary>, cacheDiv) : null;
     } else {
-        return (
-            <Fragment>
-                {activatedRef.current && createPortal(<ErrorElement>{children}</ErrorElement>, targetElement)}
-            </Fragment>
-        )
+        return activatedRef.current ? createPortal(
+            <MemoCacheComponentProvider active={active} destroy={cacheDestroy}>
+                {children}
+            </MemoCacheComponentProvider>,
+            cacheDiv, name) : null;
     }
 }
 
-export default memo(CacheComponent, (prevProps, nextProps) => {
-    return prevProps.active === nextProps.active
-})
+
+export default CacheComponent;
+
+

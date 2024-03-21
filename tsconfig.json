@@ -24,6 +24,8 @@
       "node"
     ]
   },
-  "include": ["src","src/*","rollup.config.ts"],
-  "exclude": ["node_modules"]
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": ["node_modules", "dist"]
 }

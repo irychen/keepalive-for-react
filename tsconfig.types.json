@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "es2015",
+    "removeComments": false,
+    "declaration": true,
+    "declarationMap": false,
+    "declarationDir": "./dist/types",
+    "emitDeclarationOnly": true,
+    "rootDir": "./src"
+  },
+  "exclude": [
+    "src/**/test.ts"
+  ]
+}

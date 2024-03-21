@@ -1,26 +1,31 @@
 {
   "name": "keepalive-for-react",
-  "version": "1.0.22",
+  "version": "2.0.0",
   "description": "A react <KeepAlive/> component like <keep-alive/> in vue, it can cache component state when component unmount, and restore state when component mount again.",
-  "main": "index.js",
   "homepage": "https://github.com/irychen/keepalive-for-react",
+  "module": "dist/esm/index.mjs",
+  "types": "dist/types/index.d.ts",
+  "main": "dist/cjs/index.cjs",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/irychen/keepalive-for-react.git"
   },
   "files": [
-    "index.js",
-    "index.d.ts"
+    "dist/types/**/*.d.ts",
+    "dist/esm/index.mjs"
   ],
   "lint-staged": {
     "src/**/*.{js,ts,tsx}": [
       "prettier --write"
     ]
   },
+  "type": "module",
   "scripts": {
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rollup --config rollup.config.ts --configPlugin typescript"
+    "build:main": "rollup --config rollup.config.js",
+    "build:types": "tsc -b ./tsconfig.types.json",
+    "build": "npm run build:main && npm run build:types"
   },
   "keywords": [
     "KeepAlive",
@@ -62,8 +67,5 @@
     "rollup-plugin-ts": "^3.4.5",
     "tslib": "^2.6.2",
     "typescript": "^5.2.2"
-  },
-  "dependencies": {
-    "fortea": "^1.0.2"
   }
 }
