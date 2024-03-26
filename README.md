@@ -124,6 +124,69 @@ function CachedComponent() {
 }
 ```
 
+### KeepAlive Props
+
+```tsx
+interface Props {
+  children: ReactNode;
+  /**
+   * active name
+   */
+  activeName: string;
+  /**
+   * max cache count default 10
+   */
+  max?: number;
+  /**
+   * cache: boolean default true
+   */
+  cache?: boolean;
+  /**
+   * maxRemoveStrategy: 'PRE' | 'LRU' default 'PRE'
+   *
+   * PRE: remove the first cacheNode
+   *
+   * LRU: remove the least recently used cacheNode
+   */
+  strategy?: 'PRE' | 'LRU';
+  /**
+   * aliveRef: KeepAliveRef
+   *
+   * aliveRef is a ref to get caches, remove cache by name, clean all cache, clean other cache except current
+   *
+   */
+  aliveRef?: RefObject<KeepAliveRef>;
+
+  exclude?: Array<string | RegExp> | string | RegExp;
+
+  include?: Array<string | RegExp> | string | RegExp;
+
+  /**
+   * suspenseElement: Suspense Wrapper Component
+   */
+  suspenseElement?: ComponentType<{
+    children: ReactNode,
+  }>;
+
+  /**
+   *  errorElement: for every cacheNode's ErrorBoundary
+   */
+  errorElement?: ComponentType<{
+    children: ReactNode,
+  }>;
+}
+
+type KeepAliveRef = {
+  getCaches: () => Array<CacheNode>
+
+  removeCache: (name: string) => void
+
+  cleanAllCache: () => void
+
+  cleanOtherCache: () => void
+}
+```
+
 
 ## Full Code Usage Example
 
