@@ -1,14 +1,17 @@
+<p align="center">
+  <img width="180" src="./react-keepalive.png" alt="fortea logo">
+</p>
+
+<p align="center">A React KeepAlive component like keep-alive in vue</p>
+
 # KeepAlive for React
 
-[中文](./README.zh_CN.md) | English
+[中文](./README.zh_CN.md) | [英文](./README.md)
 
 [![NPM version](https://img.shields.io/npm/v/keepalive-for-react.svg?style=flat)](https://npmjs.com/package/keepalive-for-react) [![NPM downloads](https://img.shields.io/npm/dm/keepalive-for-react.svg?style=flat)](https://npmjs.com/package/keepalive-for-react)
 
-## introduction
 
-A React KeepAlive component like keep-alive in vue
-
-### Attention !
+**Attention!**
 
 DO NOT use <React.StrictMode />, it CANNOT work with keepalive-for-react in development mode. because it can lead to
 some unexpected behavior when you use keepalive-for-react's useOnActive hook.

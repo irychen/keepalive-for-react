@@ -1,6 +1,12 @@
-# React的KeepAlive
+<p align="center">
+  <img width="180" src="./react-keepalive.png" alt="fortea logo">
+</p>
 
-[中文](./README.zh_CN.md) | 英文
+<p align="center">A React KeepAlive component like keep-alive in vue</p>
+
+# KeepAlive for React
+
+[中文](./README.zh_CN.md) | [英文](./README.md)
 
 [![NPM版本](https://img.shields.io/npm/v/keepalive-for-react.svg?style=flat)](https://npmjs.com/package/keepalive-for-react) [![NPM下载](https://img.shields.io/npm/dm/keepalive-for-react.svg?style=flat)](https://npmjs.com/package/keepalive-for-react)
 
