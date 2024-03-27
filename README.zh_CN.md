@@ -16,7 +16,9 @@
 
 ### 注意！
 
-请勿使用 `<React.StrictMode />`，它无法在开发模式下与keepalive-for-react协同工作。因为当你使用keepalive-for-react的useOnActive钩子时，它可能会导致一些意外行为。
+- 请勿使用 `<React.StrictMode />`，它无法在开发模式下与keepalive-for-react协同工作。因为当你使用keepalive-for-react的useOnActive钩子时，它可能会导致一些意外行为。
+
+- 在Router中仅支持react-router-dom v6+ 版本
 
 ## 特性
 
@@ -70,7 +72,7 @@ function TabsPage() {
 ```
 
 
-在react-router-dom中
+在react-router-dom中 v6+
 
 ```tsx
 import {useLocation, useOutlet} from 'react-router-dom';

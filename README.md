@@ -13,8 +13,10 @@
 
 **Attention!**
 
-DO NOT use <React.StrictMode />, it CANNOT work with keepalive-for-react in development mode. because it can lead to
+- DO NOT use <React.StrictMode />, it CANNOT work with keepalive-for-react in development mode. because it can lead to
 some unexpected behavior when you use keepalive-for-react's useOnActive hook.
+
+- In Router only support react-router-dom v6+
 
 ## Features
 
@@ -68,7 +70,7 @@ function TabsPage() {
 ```
 
 
-in react-router-dom
+in react-router-dom v6+
 
 ```tsx
 import {useLocation, useOutlet} from 'react-router-dom';
