@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="180" src="./react-keepalive.png" alt="fortea logo">
+  <img width="180" src="./react-keepalive.png" alt="keepalive-for-react logo">
 </p>
 
 <p align="center">A React KeepAlive component like keep-alive in vue</p>
