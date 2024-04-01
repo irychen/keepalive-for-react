@@ -125,8 +125,8 @@ function KeepAlive(props: Props) {
             prevCacheNodes = prevCacheNodes.filter(item => item.cache);
 
             // remove cacheNodes with exclude
-            if (isArr(props.exclude)) {
-                const exclude = props.exclude as Array<string | RegExp>;
+            if (!isNil(props.exclude)) {
+           const exclude = isArr(props.exclude) ? props.exclude : [props.exclude]
                 prevCacheNodes = prevCacheNodes.filter(item => {
                     return !exclude.some(exclude => {
                         if (isRegExp(exclude)) {
@@ -136,22 +136,11 @@ function KeepAlive(props: Props) {
                         }
                     });
                 });
-            } else if (props.exclude) {
-                const exclude = props.exclude as string | RegExp;
-                if (isRegExp(exclude)) {
-                    prevCacheNodes = prevCacheNodes.filter(item => {
-                        return !exclude.test(item.name);
-                    });
-                } else {
-                    prevCacheNodes = prevCacheNodes.filter(item => {
-                        return item.name !== exclude;
-                    });
-                }
-            }
+            } 
 
             // only keep cacheNodes with include
-            if (isArr(props.include)) {
-                const include = props.include as Array<string | RegExp>;
+            if (!isNil(props.include)) {
+                const include = isArr(props.include) ? props.include : [props.include];
                 prevCacheNodes = prevCacheNodes.filter(item => {
                     return include.some(include => {
                         if (isRegExp(include)) {
@@ -161,19 +150,7 @@ function KeepAlive(props: Props) {
                         }
                     });
                 });
-            } else if (props.include) {
-                const include = props.include as string | RegExp;
-                if (isRegExp(include)) {
-                    prevCacheNodes = prevCacheNodes.filter(item => {
-                        return include.test(item.name);
-                    });
-                } else {
-                    prevCacheNodes = prevCacheNodes.filter(item => {
-                        return item.name === include;
-                    });
-                }
-            }
-
+            } 
 
             const lastActiveTime = Date.now();
 
