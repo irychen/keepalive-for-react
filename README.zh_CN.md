@@ -87,7 +87,7 @@ function BasicLayoutWithCache() {
    * 用于区分不同页面以进行缓存
    */
   const cacheKey = useMemo(() => {
-    return location.pathname + location.search + location.hash;
+    return location.pathname + location.search;
   }, [location]);
 
 
