@@ -1,4 +1,4 @@
-import { ComponentType, ReactNode, RefObject, useCallback, useLayoutEffect, useRef, useState } from 'react';
+import  { ComponentType, Fragment, ReactNode, RefObject, useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import MemoCacheComponentProvider from '../KeepaAliveProvider';
 
@@ -6,15 +6,16 @@ interface Props {
     containerDivRef: RefObject<HTMLDivElement>;
     active: boolean;
     name: string;
-    errorElement?: ComponentType<any>;
+    errorElement?: ComponentType<{
+      children: ReactNode;
+    }>;
     children: ReactNode;
     destroy: (name: string) => void;
 }
 
 function CacheComponent(props: Props) {
-    const { containerDivRef, active, children, destroy, name } = props;
+    const { containerDivRef, active, children, destroy, name, errorElement : ErrorBoundary = Fragment } = props;
     const activatedRef = useRef(false);
-    const ErrorBoundary = props.errorElement;
 
     activatedRef.current = activatedRef.current || active;
 
@@ -47,19 +48,11 @@ function CacheComponent(props: Props) {
     }, [destroy, name]);
 
 
-    if (ErrorBoundary) {
-        return activatedRef.current ? createPortal(<ErrorBoundary>
-            <MemoCacheComponentProvider active={active} destroy={cacheDestroy}>
-                {children}
-            </MemoCacheComponentProvider>
-        </ErrorBoundary>, cacheDiv) : null;
-    } else {
-        return activatedRef.current ? createPortal(
-            <MemoCacheComponentProvider active={active} destroy={cacheDestroy}>
-                {children}
-            </MemoCacheComponentProvider>,
-            cacheDiv, name) : null;
-    }
+    return activatedRef.current ? createPortal(<ErrorBoundary>
+        <MemoCacheComponentProvider active={active} destroy={cacheDestroy}>
+            {children}
+        </MemoCacheComponentProvider>
+    </ErrorBoundary>, cacheDiv, name) : null;
 }
 
 

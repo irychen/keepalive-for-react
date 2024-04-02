@@ -114,7 +114,7 @@ type KeepAliveRef = {
 
 
 function KeepAlive(props: Props) {
-    const { aliveRef, cache = true, strategy = 'Pre', activeName,children, max = 10, errorElement } = props;
+    const { aliveRef, cache = true, strategy = 'Pre', activeName,children, max = 10, errorElement, suspenseElement: SuspenseElement = Fragment } = props;
     const containerDivRef = useRef<HTMLDivElement>(null);
     const [cacheNodes, setCacheNodes] = useState<Array<CacheNode>>([]);
 
@@ -231,24 +231,7 @@ function KeepAlive(props: Props) {
     return (
         <Fragment>
             <div ref={containerDivRef} className={'keep-alive-render'}></div>
-            {isNil(props.suspenseElement) ? (
-                cacheNodes.map(item => {
-                    const { name, ele } = item;
-                    return (
-                        <CacheComponent
-                            containerDivRef={containerDivRef}
-                            key={name}
-                            errorElement={errorElement}
-                            active={activeName === name}
-                            name={name}
-                            destroy={destroy}
-                        >
-                            {ele}
-                        </CacheComponent>
-                    );
-                })
-            ) : (
-                <props.suspenseElement>
+                <SuspenseElement>
                     {cacheNodes.map(item => {
                         const { name, ele } = item;
                         return (
@@ -264,8 +247,7 @@ function KeepAlive(props: Props) {
                             </CacheComponent>
                         );
                     })}
-                </props.suspenseElement>
-            )}
+                </SuspenseElement>
         </Fragment>
     );
 }
