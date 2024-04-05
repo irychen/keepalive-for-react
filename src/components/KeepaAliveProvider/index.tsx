@@ -1,4 +1,4 @@
-import { createContext, memo, ReactNode, useContext, useEffect, useMemo, useRef } from 'react';
+import { createContext, memo, ReactNode, useContext, useEffect, useMemo, useRef } from "react"
 
 /**
  * The context of the cache component.
@@ -6,42 +6,37 @@ import { createContext, memo, ReactNode, useContext, useEffect, useMemo, useRef 
  * @property {boolean} active - The active state of the cache component.
  * @property {() => void} destroy - A function to destroy the cache component.
  */
-export interface KeepAliveContext{
-    active: boolean;
-    destroy: () => void;
+export interface KeepAliveContext {
+    active: boolean
+    destroy: () => void
 }
 
 export const CacheComponentContext = createContext<KeepAliveContext>({
     active: false,
-    destroy: () => {
-    },
-});
+    destroy: () => {},
+})
 
 const useCacheComponentContext = () => {
-    return useContext(CacheComponentContext);
-};
+    return useContext(CacheComponentContext)
+}
 
-
-function CacheComponentProvider(props: { children: ReactNode; active: boolean, destroy: () => void }) {
-    const { children, active, destroy } = props;
+function CacheComponentProvider(props: { children: ReactNode; active: boolean; destroy: () => void }) {
+    const { children, active, destroy } = props
 
     const value = useMemo(() => {
-        return { active, destroy };
-    }, [active, destroy]);
+        return { active, destroy }
+    }, [active, destroy])
 
-    return <CacheComponentContext.Provider value={value}>
-        {children}
-    </CacheComponentContext.Provider>;
+    return <CacheComponentContext.Provider value={value}>{children}</CacheComponentContext.Provider>
 }
 
 const MemoCacheComponentProvider = memo(CacheComponentProvider, (prevProps, nextProps) => {
-    return prevProps.active === nextProps.active;
-});
+    return prevProps.active === nextProps.active
+})
 
-export const useKeepAliveContext = useCacheComponentContext;
+export const useKeepAliveContext = useCacheComponentContext
 
-
-export default MemoCacheComponentProvider;
+export default MemoCacheComponentProvider
 
 /**
  * a hook that executes a callback function when the active state of the cache component changes.
@@ -51,22 +46,22 @@ export default MemoCacheComponentProvider;
  * @param skipMount Optional. If true, the callback (and potentially its cleanup) is not executed on the initial component mount. Defaults to false.
  */
 export const useOnActive = (cb: (active: boolean) => any, skipMount = false) => {
-    const { active } = useCacheComponentContext();
-    const isMount = useRef(false);
+    const { active } = useCacheComponentContext()
+    const isMount = useRef(false)
     useEffect(() => {
         let destroyCb: any
         if (skipMount) {
             if (isMount.current) {
-                destroyCb = cb(active);
+                destroyCb = cb(active)
             }
-            isMount.current = true;
+            isMount.current = true
         } else {
-            destroyCb =  cb(active);
+            destroyCb = cb(active)
         }
         return () => {
             if (destroyCb && typeof destroyCb === "function") {
                 destroyCb()
             }
         }
-    }, [active, cb, skipMount]);
-};
+    }, [active, cb, skipMount])
+}

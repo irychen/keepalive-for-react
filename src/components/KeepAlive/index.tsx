@@ -2,31 +2,29 @@ import {
     ComponentType,
     Fragment,
     ReactNode,
-    RefObject, useCallback,
+    RefObject,
+    useCallback,
     useImperativeHandle,
     useLayoutEffect,
     useRef,
     useState,
-} from 'react';
-import CacheComponent from '../CacheComponent';
-
-
-
+} from "react"
+import CacheComponent from "../CacheComponent"
 
 interface Props {
-    children: ReactNode;
+    children: ReactNode
     /**
      * active name
      */
-    activeName: string;
+    activeName: string
     /**
      * max cache count default 10
      */
-    max?: number;
+    max?: number
     /**
      * cache: boolean default true
      */
-    cache?: boolean;
+    cache?: boolean
     /**
      * maxRemoveStrategy: 'PRE' | 'LRU' default 'PRE'
      *
@@ -34,51 +32,51 @@ interface Props {
      *
      * LRU: remove the least recently used cacheNode
      */
-    strategy?: 'PRE' | 'LRU';
+    strategy?: "PRE" | "LRU"
     /**
      * aliveRef: KeepAliveRef
      *
      * aliveRef is a ref to get caches, remove cache by name, clean all cache, clean other cache except current
      *
      */
-    aliveRef?: RefObject<KeepAliveRef>;
+    aliveRef?: RefObject<KeepAliveRef>
 
-    exclude?: Array<string | RegExp> | string | RegExp;
+    exclude?: Array<string | RegExp> | string | RegExp
 
-    include?: Array<string | RegExp> | string | RegExp;
+    include?: Array<string | RegExp> | string | RegExp
 
     /**
      * suspenseElement: Suspense Wrapper Component
      */
     suspenseElement?: ComponentType<{
-        children: ReactNode,
-    }>;
+        children: ReactNode
+    }>
 
     /**
      *  errorElement: for every cacheNode's ErrorBoundary
      */
     errorElement?: ComponentType<{
-        children: ReactNode,
-    }>;
+        children: ReactNode
+    }>
 }
 
 function isNil(value: any): value is null | undefined {
-    return value === null || value === undefined;
+    return value === null || value === undefined
 }
 
 function isRegExp(value: any): value is RegExp {
-    return Object.prototype.toString.call(value) === '[object RegExp]';
+    return Object.prototype.toString.call(value) === "[object RegExp]"
 }
 
 function isArr(value: any): value is Array<any> {
-    return Array.isArray(value);
+    return Array.isArray(value)
 }
 
 interface CacheNode {
-    name: string;
-    ele?: ReactNode;
-    cache: boolean;
-    lastActiveTime: number;
+    name: string
+    ele?: ReactNode
+    cache: boolean
+    lastActiveTime: number
 }
 
 /**
@@ -90,17 +88,17 @@ interface CacheNode {
  */
 const RemoveStrategies: Record<string, (nodes: CacheNode[]) => CacheNode[]> = {
     PRE: (nodes: CacheNode[]) => {
-        nodes.shift();
-        return nodes;
+        nodes.shift()
+        return nodes
     },
     LRU: (nodes: CacheNode[]) => {
         const node = nodes.reduce((prev, cur) => {
-            return prev.lastActiveTime < cur.lastActiveTime ? prev : cur;
-        });
-        nodes.splice(nodes.indexOf(node), 1);
-        return nodes;
+            return prev.lastActiveTime < cur.lastActiveTime ? prev : cur
+        })
+        nodes.splice(nodes.indexOf(node), 1)
+        return nodes
     },
-};
+}
 
 type KeepAliveRef = {
     getCaches: () => Array<CacheNode>
@@ -112,70 +110,78 @@ type KeepAliveRef = {
     cleanOtherCache: () => void
 }
 
-
 function KeepAlive(props: Props) {
-    const { aliveRef, cache = true, strategy = 'Pre', activeName,children, max = 10, errorElement, suspenseElement: SuspenseElement = Fragment } = props;
-    const containerDivRef = useRef<HTMLDivElement>(null);
-    const [cacheNodes, setCacheNodes] = useState<Array<CacheNode>>([]);
+    const {
+        aliveRef,
+        cache = true,
+        strategy = "Pre",
+        activeName,
+        children,
+        max = 10,
+        errorElement,
+        suspenseElement: SuspenseElement = Fragment,
+    } = props
+    const containerDivRef = useRef<HTMLDivElement>(null)
+    const [cacheNodes, setCacheNodes] = useState<Array<CacheNode>>([])
 
     useLayoutEffect(() => {
-        if (isNil(activeName)) return;
+        if (isNil(activeName)) return
         setCacheNodes(prevCacheNodes => {
             // remove cacheNodes with cache false node
-            prevCacheNodes = prevCacheNodes.filter(item => item.cache);
+            prevCacheNodes = prevCacheNodes.filter(item => item.cache)
 
             // remove cacheNodes with exclude
             if (!isNil(props.exclude)) {
-           const exclude = isArr(props.exclude) ? props.exclude : [props.exclude]
+                const exclude = isArr(props.exclude) ? props.exclude : [props.exclude]
                 prevCacheNodes = prevCacheNodes.filter(item => {
                     return !exclude.some(exclude => {
                         if (isRegExp(exclude)) {
-                            return exclude.test(item.name);
+                            return exclude.test(item.name)
                         } else {
-                            return item.name === exclude;
+                            return item.name === exclude
                         }
-                    });
-                });
-            } 
+                    })
+                })
+            }
 
             // only keep cacheNodes with include
             if (!isNil(props.include)) {
-                const include = isArr(props.include) ? props.include : [props.include];
+                const include = isArr(props.include) ? props.include : [props.include]
                 prevCacheNodes = prevCacheNodes.filter(item => {
                     return include.some(include => {
                         if (isRegExp(include)) {
-                            return include.test(item.name);
+                            return include.test(item.name)
                         } else {
-                            return item.name === include;
+                            return item.name === include
                         }
-                    });
-                });
-            } 
+                    })
+                })
+            }
 
-            const lastActiveTime = Date.now();
+            const lastActiveTime = Date.now()
 
-            const cacheNode = prevCacheNodes.find(item => item.name === activeName);
+            const cacheNode = prevCacheNodes.find(item => item.name === activeName)
 
             if (cacheNode) {
                 return prevCacheNodes.map(item => {
                     if (item.name === activeName) {
-                        return { name: activeName, cache, lastActiveTime, ele: children };
+                        return { name: activeName, cache, lastActiveTime, ele: children }
                     }
-                    return item;
-                });
+                    return item
+                })
             } else {
                 if (prevCacheNodes.length >= max) {
-                    const removeStrategyFunc = RemoveStrategies[strategy];
+                    const removeStrategyFunc = RemoveStrategies[strategy]
                     if (removeStrategyFunc) {
-                        prevCacheNodes = removeStrategyFunc(prevCacheNodes);
+                        prevCacheNodes = removeStrategyFunc(prevCacheNodes)
                     } else {
-                        throw new Error(`strategy ${strategy} is not supported`);
+                        throw new Error(`strategy ${strategy} is not supported`)
                     }
                 }
-                return [...prevCacheNodes, { name: activeName, cache, lastActiveTime, ele: children }];
+                return [...prevCacheNodes, { name: activeName, cache, lastActiveTime, ele: children }]
             }
-        });
-    }, [children, activeName, setCacheNodes, max, cache, strategy, props.exclude, props.include]);
+        })
+    }, [children, activeName, setCacheNodes, max, cache, strategy, props.exclude, props.include])
 
     useImperativeHandle(
         aliveRef,
@@ -183,51 +189,52 @@ function KeepAlive(props: Props) {
             getCaches: () => cacheNodes,
             removeCache: (name: string) => {
                 setCacheNodes(cacheNodes => {
-                    return [...cacheNodes.filter(item => item.name !== name)];
-                });
+                    return [...cacheNodes.filter(item => item.name !== name)]
+                })
             },
             cleanAllCache: () => {
-                setCacheNodes([]);
+                setCacheNodes([])
             },
             cleanOtherCache: () => {
                 setCacheNodes(cacheNodes => {
-                    return [...cacheNodes.filter(item => item.name === activeName)];
-                });
+                    return [...cacheNodes.filter(item => item.name === activeName)]
+                })
             },
         }),
         [cacheNodes, setCacheNodes, activeName],
-    );
+    )
 
-
-    const destroy = useCallback((name: string) => {
+    const destroy = useCallback(
+        (name: string) => {
             setCacheNodes(cacheNodes => {
-                return cacheNodes.filter(item => item.name !== name);
-            });
-    }, [setCacheNodes]);
+                return cacheNodes.filter(item => item.name !== name)
+            })
+        },
+        [setCacheNodes],
+    )
 
     return (
         <Fragment>
-            <div ref={containerDivRef} className={'keep-alive-render'}></div>
-                <SuspenseElement>
-                    {cacheNodes.map(item => {
-                        const { name, ele } = item;
-                        return (
-                            <CacheComponent
-                                containerDivRef={containerDivRef}
-                                key={name}
-                                errorElement={errorElement}
-                                active={activeName === name}
-                                name={name}
-                                destroy={destroy}
-                            >
-                                {ele}
-                            </CacheComponent>
-                        );
-                    })}
-                </SuspenseElement>
+            <div ref={containerDivRef} className={"keep-alive-render"}></div>
+            <SuspenseElement>
+                {cacheNodes.map(item => {
+                    const { name, ele } = item
+                    return (
+                        <CacheComponent
+                            containerDivRef={containerDivRef}
+                            key={name}
+                            errorElement={errorElement}
+                            active={activeName === name}
+                            name={name}
+                            destroy={destroy}
+                        >
+                            {ele}
+                        </CacheComponent>
+                    )
+                })}
+            </SuspenseElement>
         </Fragment>
-    );
+    )
 }
 
-
-export default KeepAlive;
+export default KeepAlive
