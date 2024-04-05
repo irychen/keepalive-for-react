@@ -25,7 +25,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:main": "rollup --config rollup.config.js",
     "build:types": "tsc -b ./tsconfig.types.json",
-    "build": "npm run build:main && npm run build:types"
+    "build": "npm run build:main && npm run build:types",
+    "prepare": "husky"
   },
   "keywords": [
     "KeepAlive",
@@ -62,6 +63,8 @@
     "@types/node": "^20.8.2",
     "@types/react": "18.2.0",
     "@types/react-dom": "18.2.0",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.2",
     "prettier": "^3.0.3",
     "rollup": "^4.0.2",
     "rollup-plugin-ts": "^3.4.5",
