@@ -162,7 +162,7 @@ interface Props {
    * aliveRef is a ref to get caches, remove cache by name, clean all cache, clean other cache except current
    *
    */
-  aliveRef?: RefObject<KeepAliveRef>;
+  aliveRef?: RefObject<KeepAliveRef | undefined> | MutableRefObject<KeepAliveRef | undefined>;
 
   exclude?: Array<string | RegExp> | string | RegExp;
 
@@ -193,6 +193,28 @@ type KeepAliveRef = {
   cleanOtherCache: () => void
 }
 ```
+
+#### useKeepaliveRef
+
+```tsx
+import { useKeepaliveRef } from "keepalive-for-react"
+
+function Example() {
+
+    const aliveRef = useKeepaliveRef()
+    
+    function clean(){
+        aliveRef.current?.cleanAllCache()
+    }
+    // ...
+    
+    return <KeepAlive aliveRef={aliveRef} >
+        ...
+    </KeepAlive>
+}
+
+```
+
 
 ## 完整代码使用示例
 

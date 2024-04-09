@@ -1,6 +1,6 @@
 import {
     ComponentType,
-    Fragment,
+    Fragment, MutableRefObject,
     ReactNode,
     RefObject,
     useCallback,
@@ -39,7 +39,7 @@ interface Props {
      * aliveRef is a ref to get caches, remove cache by name, clean all cache, clean other cache except current
      *
      */
-    aliveRef?: RefObject<KeepAliveRef>
+    aliveRef?: RefObject<KeepAliveRef | undefined> | MutableRefObject<KeepAliveRef | undefined>
 
     exclude?: Array<string | RegExp> | string | RegExp
 
@@ -108,6 +108,10 @@ type KeepAliveRef = {
     cleanAllCache: () => void
 
     cleanOtherCache: () => void
+}
+
+export function useKeepaliveRef() {
+    return useRef<KeepAliveRef>()
 }
 
 function KeepAlive(props: Props) {
