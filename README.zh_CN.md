@@ -100,17 +100,17 @@ function BasicLayoutWithCache() {
 ```
 
 
-#### useOnActive
+#### useEffectOnActive / useLayoutEffectOnActive
 
-useOnActive是一个钩子，用于监听被KeepAlive包装的组件的激活状态。
+useEffectOnActive是一个钩子，用于监听被KeepAlive包装的组件的激活状态。
 
 ```tsx
 
-import {useOnActive} from 'keepalive-for-react';
+import {useEffectOnActive} from 'keepalive-for-react';
 
-useOnActive((active) => {
+useEffectOnActive((active) => {
     console.log('useOnActive', active);
-}, false);
+}, false, []);
 
 ```
 

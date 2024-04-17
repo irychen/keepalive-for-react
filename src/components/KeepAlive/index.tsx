@@ -1,6 +1,7 @@
 import {
     ComponentType,
-    Fragment, MutableRefObject,
+    Fragment,
+    MutableRefObject,
     ReactNode,
     RefObject,
     useCallback,
@@ -10,6 +11,8 @@ import {
     useState,
 } from "react"
 import CacheComponent from "../CacheComponent"
+
+type Strategy = "PRE" | "LRU"
 
 interface Props {
     children: ReactNode
@@ -26,13 +29,13 @@ interface Props {
      */
     cache?: boolean
     /**
-     * maxRemoveStrategy: 'PRE' | 'LRU' default 'PRE'
+     * maxRemoveStrategy: 'PRE' | 'LRU' default 'LRU'
      *
      * PRE: remove the first cacheNode
      *
      * LRU: remove the least recently used cacheNode
      */
-    strategy?: "PRE" | "LRU"
+    strategy?: Strategy
     /**
      * aliveRef: KeepAliveRef
      *
@@ -118,7 +121,7 @@ function KeepAlive(props: Props) {
     const {
         aliveRef,
         cache = true,
-        strategy = "Pre",
+        strategy = "LRU",
         activeName,
         children,
         max = 10,

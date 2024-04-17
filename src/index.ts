@@ -1,4 +1,11 @@
 import KeepAlive, { useKeepaliveRef } from "./components/KeepAlive"
-import { useKeepAliveContext, useOnActive } from "./components/KeepaAliveProvider"
+import { useKeepAliveContext, useEffectOnActive, useLayoutEffectOnActive } from "./components/KeepaAliveProvider"
 
-export { KeepAlive as default, useKeepaliveRef, KeepAlive, useOnActive, useKeepAliveContext }
+export {
+    KeepAlive as default,
+    useKeepaliveRef,
+    KeepAlive,
+    useEffectOnActive,
+    useLayoutEffectOnActive,
+    useKeepAliveContext,
+}

@@ -98,17 +98,17 @@ function BasicLayoutWithCache() {
 ```
 
 
-#### useOnActive
+#### useEffectOnActive / useLayoutEffectOnActive
 
-useOnActive is a hook to listen to the active state of the component which is wrapped by KeepAlive.
+useEffectOnActive is a hook to listen to the active state of the component which is wrapped by KeepAlive.
 
 ```tsx
 
-import {useOnActive} from 'keepalive-for-react';
+import {useEffectOnActive} from 'keepalive-for-react';
 
-useOnActive((active) => {
+useEffectOnActive((active) => {
     console.log('useOnActive', active);
-}, false);
+}, false, []);
 
 ```
 
