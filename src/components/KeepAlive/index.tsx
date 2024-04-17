@@ -11,6 +11,7 @@ import {
     useState,
 } from "react"
 import CacheComponent from "../CacheComponent"
+import { isArr, isNil, isRegExp } from "../../utils"
 
 type Strategy = "PRE" | "LRU"
 
@@ -61,18 +62,6 @@ interface Props {
     errorElement?: ComponentType<{
         children: ReactNode
     }>
-}
-
-function isNil(value: any): value is null | undefined {
-    return value === null || value === undefined
-}
-
-function isRegExp(value: any): value is RegExp {
-    return Object.prototype.toString.call(value) === "[object RegExp]"
-}
-
-function isArr(value: any): value is Array<any> {
-    return Array.isArray(value)
 }
 
 interface CacheNode {

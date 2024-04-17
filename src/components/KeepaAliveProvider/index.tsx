@@ -1,14 +1,5 @@
-import {
-    createContext,
-    DependencyList,
-    memo,
-    ReactNode,
-    useContext,
-    useEffect,
-    useLayoutEffect,
-    useMemo,
-    useRef,
-} from "react"
+import { createContext, DependencyList, memo, ReactNode, useContext, useEffect, useLayoutEffect, useMemo, useRef } from "react"
+import { isFn } from "../../utils"
 
 /**
  * The context of the cache component.
@@ -54,13 +45,9 @@ export default MemoCacheComponentProvider
  *
  * @param cb A callback function to be executed when the active state changes. It receives the current active state as a parameter. If it returns a function, that function will be used as a cleanup callback.
  * @param skipMount If true, the callback (and potentially its cleanup) is not executed on the initial component mount. Defaults to false.
- * @param deps
+ * @param deps Dependencies to be passed to the useEffect hook.
  */
-export const useEffectOnActive = (
-    cb: (active: boolean) => void | (() => void),
-    skipMount = false,
-    deps: DependencyList,
-): void => {
+export const useEffectOnActive = (cb: (active: boolean) => void | (() => void), skipMount = false, deps: DependencyList): void => {
     const { active } = useCacheComponentContext() // 假设这个Hook返回一个对象，其中包含active状态
     const isMount = useRef<boolean>(false)
     useEffect(() => {
@@ -70,7 +57,7 @@ export const useEffectOnActive = (
         }
         const destroyCb = cb(active)
         return () => {
-            if (destroyCb && typeof destroyCb === "function") {
+            if (isFn(destroyCb)) {
                 destroyCb()
             }
         }
@@ -78,18 +65,15 @@ export const useEffectOnActive = (
 }
 
 /**
+ * @name useLayoutEffectOnActive
  * a hook that executes a callback function when the active state of the cache component changes.
  * The callback can optionally return a cleanup function that will be executed on component unmount or before the callback is executed again.
  *
  * @param cb A callback function to be executed when the active state changes. It receives the current active state as a parameter. If it returns a function, that function will be used as a cleanup callback.
  * @param skipMount If true, the callback (and potentially its cleanup) is not executed on the initial component mount. Defaults to false.
- * @param deps
+ * @param deps Dependencies to be passed to the useLayoutEffect hook.
  */
-export const useLayoutEffectOnActive = (
-    cb: (active: boolean) => void | (() => void),
-    skipMount = false,
-    deps: DependencyList,
-): void => {
+export const useLayoutEffectOnActive = (cb: (active: boolean) => void | (() => void), skipMount = false, deps: DependencyList): void => {
     const { active } = useCacheComponentContext() // 假设这个Hook返回一个对象，其中包含active状态
     const isMount = useRef<boolean>(false)
     useLayoutEffect(() => {
@@ -99,7 +83,7 @@ export const useLayoutEffectOnActive = (
         }
         const destroyCb = cb(active)
         return () => {
-            if (destroyCb && typeof destroyCb === "function") {
+            if (isFn(destroyCb)) {
                 destroyCb()
             }
         }
