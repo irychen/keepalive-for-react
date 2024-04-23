@@ -6,7 +6,7 @@
 
 # KeepAlive for React
 
-[中文](./README.zh_CN.md) | [英文](./README.md)
+[中文](./README.zh_CN.md) | English
 
 [![NPM version](https://img.shields.io/npm/v/keepalive-for-react.svg?style=flat)](https://npmjs.com/package/keepalive-for-react) [![NPM downloads](https://img.shields.io/npm/dm/keepalive-for-react.svg?style=flat)](https://npmjs.com/package/keepalive-for-react)
 
@@ -220,6 +220,10 @@ link to [React Keepalive Demo Repo](https://github.com/irychen/react-keepalive-d
 
 Preview Online Demo: [Link: https://irychen.github.io/react-keepalive-demo/](https://irychen.github.io/react-keepalive-demo/)
 
+
+## Forum
+
+- [Discord](https://discord.gg/uKryC4emxn)
 
 ## Star History
 
