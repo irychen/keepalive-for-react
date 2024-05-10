@@ -1,6 +1,6 @@
 import { ComponentType, Fragment, ReactNode, RefObject, useCallback, useLayoutEffect, useRef, useState } from "react"
 import { createPortal } from "react-dom"
-import MemoCacheComponentProvider from "../KeepaAliveProvider"
+import MemoCacheComponentProvider from "../KeepAliveProvider"
 
 interface Props {
     containerDivRef: RefObject<HTMLDivElement>
