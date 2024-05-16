@@ -2,9 +2,13 @@
   <img width="180" src="./react-keepalive.png" alt="keepalive-for-react logo">
 </p>
 
-<p align="center">A React KeepAlive component like keep-alive in vue</p>
+<div align="center">
+  <h1 align="center">
+    KeepAlive for React
+  </h1>
+</div>
 
-# KeepAlive for React
+<p align="center">A React KeepAlive component like keep-alive in vue</p>
 
 [中文](./README.zh_CN.md) | English
 
