@@ -227,7 +227,7 @@ Preview Online Demo: [Link: https://irychen.github.io/react-keepalive-demo/](htt
 
 ## Forum
 
-- [Discord](https://discord.gg/uKryC4emxn)
+- [Discord](https://discord.gg/ycf896w7eA)
 
 ## Star History
 
