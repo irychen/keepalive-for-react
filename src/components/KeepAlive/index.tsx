@@ -62,6 +62,10 @@ interface Props {
     errorElement?: ComponentType<{
         children: ReactNode
     }>
+
+    animationWrapper?: ComponentType<{
+        children: ReactNode
+    }>
 }
 
 interface CacheNode {
@@ -116,6 +120,7 @@ function KeepAlive(props: Props) {
         max = 10,
         errorElement,
         suspenseElement: SuspenseElement = Fragment,
+        animationWrapper: AnimationWrapper = Fragment,
     } = props
     const containerDivRef = useRef<HTMLDivElement>(null)
     const [cacheNodes, setCacheNodes] = useState<Array<CacheNode>>([])
@@ -213,7 +218,9 @@ function KeepAlive(props: Props) {
 
     return (
         <Fragment>
-            <div ref={containerDivRef} className={"keep-alive-render"}></div>
+            <AnimationWrapper>
+                <div ref={containerDivRef} className={"keep-alive-render"} style={{ height: "100%" }}></div>
+            </AnimationWrapper>
             <SuspenseElement>
                 {cacheNodes.map(item => {
                     const { name, ele } = item

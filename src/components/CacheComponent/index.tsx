@@ -1,4 +1,4 @@
-import { ComponentType, Fragment, ReactNode, RefObject, useCallback, useLayoutEffect, useRef, useState } from "react"
+import { ComponentType, Fragment, memo, ReactNode, RefObject, useCallback, useLayoutEffect, useMemo, useRef } from "react"
 import { createPortal } from "react-dom"
 import MemoCacheComponentProvider from "../KeepAliveProvider"
 
@@ -19,16 +19,16 @@ function CacheComponent(props: Props) {
 
     activatedRef.current = activatedRef.current || active
 
-    const [cacheDiv] = useState(() => {
+    const cacheDiv = useMemo(() => {
         const cacheDiv = document.createElement("div")
         cacheDiv.setAttribute("data-name", name)
+        cacheDiv.setAttribute("style", "height: 100%")
         cacheDiv.className = `cache-component`
         return cacheDiv
-    })
+    }, [])
 
     useLayoutEffect(() => {
         const containerDiv = containerDivRef.current
-
         cacheDiv.classList.remove("active", "inactive")
         if (active) {
             containerDiv?.appendChild(cacheDiv)
@@ -60,4 +60,4 @@ function CacheComponent(props: Props) {
         : null
 }
 
-export default CacheComponent
+export default memo(CacheComponent)
