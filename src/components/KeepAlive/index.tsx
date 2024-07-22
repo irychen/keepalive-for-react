@@ -66,6 +66,34 @@ interface Props {
     animationWrapper?: ComponentType<{
         children: ReactNode
     }>
+
+    /**
+     * onBeforeActive: callback before active
+     * @param name
+     *
+     * you can do something before active like set style for dropdown
+     *
+     * example:
+     * ```tsx
+     * // fix the style flashing issue when using Antd Dropdown and Select components, which occurs when the components are wrapped by Suspense and cached.
+     *
+     * // set .ant-select-dropdown .ant-picker-dropdown style to ''
+     * const dropdowns = document.querySelectorAll('.ant-select-dropdown');
+     * dropdowns.forEach(dropdown => {
+     *     if (dropdown) {
+     *         dropdown.setAttribute('style', '');
+     *     }
+     * });
+     *
+     * const pickerDropdowns = document.querySelectorAll('.ant-picker-dropdown');
+     * pickerDropdowns.forEach(pickerDropdown => {
+     *     if (pickerDropdown) {
+     *         pickerDropdown.setAttribute('style', '');
+     *     }
+     * });
+     * ```
+     */
+    onBeforeActive?: (name: string) => void
 }
 
 interface CacheNode {
@@ -121,6 +149,7 @@ function KeepAlive(props: Props) {
         errorElement,
         suspenseElement: SuspenseElement = Fragment,
         animationWrapper: AnimationWrapper = Fragment,
+        onBeforeActive,
     } = props
     const containerDivRef = useRef<HTMLDivElement>(null)
     const [cacheNodes, setCacheNodes] = useState<Array<CacheNode>>([])
@@ -166,11 +195,13 @@ function KeepAlive(props: Props) {
             if (cacheNode) {
                 return prevCacheNodes.map(item => {
                     if (item.name === activeName) {
+                        onBeforeActive && onBeforeActive(activeName)
                         return { name: activeName, cache, lastActiveTime, ele: children }
                     }
                     return item
                 })
             } else {
+                onBeforeActive && onBeforeActive(activeName)
                 if (prevCacheNodes.length >= max) {
                     const removeStrategyFunc = RemoveStrategies[strategy]
                     if (removeStrategyFunc) {
