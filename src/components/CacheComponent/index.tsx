@@ -11,10 +11,19 @@ interface Props {
     }>
     children: ReactNode
     destroy: (name: string) => void
+    cacheDivClassName?: string
 }
 
 function CacheComponent(props: Props) {
-    const { containerDivRef, active, children, destroy, name, errorElement: ErrorBoundary = Fragment } = props
+    const {
+        containerDivRef,
+        active,
+        children,
+        destroy,
+        name,
+        errorElement: ErrorBoundary = Fragment,
+        cacheDivClassName = `cache-component`,
+    } = props
     const activatedRef = useRef(false)
 
     activatedRef.current = activatedRef.current || active
@@ -23,7 +32,7 @@ function CacheComponent(props: Props) {
         const cacheDiv = document.createElement("div")
         cacheDiv.setAttribute("data-name", name)
         cacheDiv.setAttribute("style", "height: 100%")
-        cacheDiv.className = `cache-component`
+        cacheDiv.className = cacheDivClassName
         return cacheDiv
     }, [])
 
