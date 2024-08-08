@@ -190,7 +190,7 @@ interface Props {
 type KeepAliveRef = {
   getCaches: () => Array<CacheNode>
 
-  removeCache: (name: string) => void
+  removeCache: (name: string) => Promise<void>
 
   cleanAllCache: () => void
 
