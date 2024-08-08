@@ -127,7 +127,7 @@ const RemoveStrategies: Record<string, (nodes: CacheNode[]) => CacheNode[]> = {
 export type KeepAliveRef = {
     getCaches: () => Array<CacheNode>
 
-    removeCache: (name: string) => void
+    removeCache: (name: string) => Promise<void>
 
     cleanAllCache: () => void
 
@@ -219,12 +219,15 @@ function KeepAlive(props: Props) {
         aliveRef,
         () => ({
             getCaches: () => cacheNodes,
-            removeCache: (name: string) => {
-                setTimeout(() => {
-                    setCacheNodes(cacheNodes => {
-                        return [...cacheNodes.filter(item => item.name !== name)]
-                    })
-                }, 0)
+            removeCache: async (name: string) => {
+                return new Promise(resolve => {
+                    setTimeout(() => {
+                        setCacheNodes(cacheNodes => {
+                            return [...cacheNodes.filter(item => item.name !== name)]
+                        })
+                        resolve()
+                    }, 0)
+                })
             },
             cleanAllCache: () => {
                 setCacheNodes([])
