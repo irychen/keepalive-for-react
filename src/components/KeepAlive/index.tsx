@@ -94,6 +94,14 @@ interface Props {
      * ```
      */
     onBeforeActive?: (name: string) => void
+    /**
+     *  containerDivRef: root node to mount cacheNodes
+     */
+    containerDivRef?: MutableRefObject<HTMLDivElement>
+    /**
+     *  cacheDivClassName: className set for cacheNodes
+     */
+    cacheDivClassName?: string
 }
 
 interface CacheNode {
@@ -150,8 +158,10 @@ function KeepAlive(props: Props) {
         suspenseElement: SuspenseElement = Fragment,
         animationWrapper: AnimationWrapper = Fragment,
         onBeforeActive,
+        containerDivRef: containerDivRefFromoProps,
+        cacheDivClassName,
     } = props
-    const containerDivRef = useRef<HTMLDivElement>(null)
+    const containerDivRef = containerDivRefFromoProps || useRef<HTMLDivElement>(null)
     const [cacheNodes, setCacheNodes] = useState<Array<CacheNode>>([])
 
     useLayoutEffect(() => {
@@ -263,6 +273,7 @@ function KeepAlive(props: Props) {
                             active={activeName === name}
                             name={name}
                             destroy={destroy}
+                            cacheDivClassName={cacheDivClassName}
                         >
                             {ele}
                         </CacheComponent>
