@@ -139,62 +139,101 @@ function CachedComponent() {
 
 ```tsx
 interface Props {
-  children: ReactNode;
-  /**
-   * active name
-   */
-  activeName: string;
-  /**
-   * max cache count default 10
-   */
-  max?: number;
-  /**
-   * cache: boolean default true
-   */
-  cache?: boolean;
-  /**
-   * maxRemoveStrategy: 'PRE' | 'LRU' default 'PRE'
-   *
-   * PRE: remove the first cacheNode
-   *
-   * LRU: remove the least recently used cacheNode
-   */
-  strategy?: 'PRE' | 'LRU';
-  /**
-   * aliveRef: KeepAliveRef
-   *
-   * aliveRef is a ref to get caches, remove cache by name, clean all cache, clean other cache except current
-   *
-   */
-  aliveRef?: RefObject<KeepAliveRef | undefined> | MutableRefObject<KeepAliveRef | undefined>;
+    children: ReactNode;
+    /**
+     * active name
+     */
+    activeName: string;
+    /**
+     * max cache count default 10
+     */
+    max?: number;
+    /**
+     * cache: boolean default true
+     */
+    cache?: boolean;
+    /**
+     * maxRemoveStrategy: 'PRE' | 'LRU' default 'PRE'
+     *
+     * PRE: remove the first cacheNode
+     *
+     * LRU: remove the least recently used cacheNode
+     */
+    strategy?: "PRE" | "LRU";
+    /**
+     * aliveRef: KeepAliveRef
+     *
+     * aliveRef is a ref to get caches, remove cache by name, clean all cache, clean other cache except current
+     *
+     */
+    aliveRef?: RefObject<KeepAliveRef | undefined> | MutableRefObject<KeepAliveRef | undefined>;
 
-  exclude?: Array<string | RegExp> | string | RegExp;
+    exclude?: Array<string | RegExp> | string | RegExp;
 
-  include?: Array<string | RegExp> | string | RegExp;
+    include?: Array<string | RegExp> | string | RegExp;
 
-  /**
-   * suspenseElement: Suspense Wrapper Component
-   */
-  suspenseElement?: ComponentType<{
-    children: ReactNode,
-  }>;
+    /**
+     * suspenseElement: Suspense Wrapper Component
+     */
+    suspenseElement?: ComponentType<{
+        children: ReactNode,
+    }>;
 
-  /**
-   *  errorElement: for every cacheNode's ErrorBoundary 
-   */
-  errorElement?: ComponentType<{
-    children: ReactNode,
-  }>;
+    /**
+     *  errorElement: for every cacheNode's ErrorBoundary
+     */
+    errorElement?: ComponentType<{
+        children: ReactNode,
+    }>;
+    animationWrapper?: ComponentType<{
+        children: ReactNode
+    }>
+
+    /**
+     * onBeforeActive: callback before active
+     * @param name
+     *
+     * you can do something before active like set style for dropdown
+     *
+     * example:
+     * ```tsx
+     * // fix the style flashing issue when using Antd Dropdown and Select components, which occurs when the components are wrapped by Suspense and cached.
+     *
+     * // set .ant-select-dropdown .ant-picker-dropdown style to ''
+     * const dropdowns = document.querySelectorAll('.ant-select-dropdown');
+     * dropdowns.forEach(dropdown => {
+     *     if (dropdown) {
+     *         dropdown.setAttribute('style', '');
+     *     }
+     * });
+     *
+     * const pickerDropdowns = document.querySelectorAll('.ant-picker-dropdown');
+     * pickerDropdowns.forEach(pickerDropdown => {
+     *     if (pickerDropdown) {
+     *         pickerDropdown.setAttribute('style', '');
+     *     }
+     * });
+     * ```
+     */
+    onBeforeActive?: (name: string) => void
+    /**
+     *  containerDivRef: root node to mount cacheNodes
+     */
+    containerDivRef?: MutableRefObject<HTMLDivElement>
+    /**
+     *  cacheDivClassName: className set for cacheNodes
+     */
+    cacheDivClassName?: string
 }
 
 type KeepAliveRef = {
-  getCaches: () => Array<CacheNode>
+    getCaches: () => Array<CacheNode>
 
-  removeCache: (name: string) => Promise<void>
+    removeCache: (name: string) => Promise<void>
 
-  cleanAllCache: () => void
+    cleanAllCache: () => void
 
-  cleanOtherCache: () => void
+    cleanOtherCache: () => void
 }
 ```
 
