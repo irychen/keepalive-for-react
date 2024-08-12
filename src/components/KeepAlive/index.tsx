@@ -158,10 +158,11 @@ function KeepAlive(props: Props) {
         suspenseElement: SuspenseElement = Fragment,
         animationWrapper: AnimationWrapper = Fragment,
         onBeforeActive,
-        containerDivRef: containerDivRefFromoProps,
+        containerDivRef: containerDivRefFromProps,
         cacheDivClassName,
     } = props
-    const containerDivRef = containerDivRefFromoProps || useRef<HTMLDivElement>(null)
+
+    const containerDivRef = containerDivRefFromProps || useRef<HTMLDivElement>(null)
     const [cacheNodes, setCacheNodes] = useState<Array<CacheNode>>([])
 
     useLayoutEffect(() => {
