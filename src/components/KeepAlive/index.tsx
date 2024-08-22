@@ -4,6 +4,7 @@ import {
     MutableRefObject,
     ReactNode,
     RefObject,
+    startTransition,
     useCallback,
     useImperativeHandle,
     useLayoutEffect,
@@ -167,62 +168,64 @@ function KeepAlive(props: Props) {
 
     useLayoutEffect(() => {
         if (isNil(activeName)) return
-        setCacheNodes(prevCacheNodes => {
-            // remove cacheNodes with cache false node
-            prevCacheNodes = prevCacheNodes.filter(item => item.cache)
-
-            // remove cacheNodes with exclude
-            if (!isNil(props.exclude)) {
-                const exclude = isArr(props.exclude) ? props.exclude : [props.exclude]
-                prevCacheNodes = prevCacheNodes.filter(item => {
-                    return !exclude.some(exclude => {
-                        if (isRegExp(exclude)) {
-                            return exclude.test(item.name)
-                        } else {
-                            return item.name === exclude
-                        }
+        startTransition(() => {
+            setCacheNodes(prevCacheNodes => {
+                // remove cacheNodes with cache false node
+                prevCacheNodes = prevCacheNodes.filter(item => item.cache)
+    
+                // remove cacheNodes with exclude
+                if (!isNil(props.exclude)) {
+                    const exclude = isArr(props.exclude) ? props.exclude : [props.exclude]
+                    prevCacheNodes = prevCacheNodes.filter(item => {
+                        return !exclude.some(exclude => {
+                            if (isRegExp(exclude)) {
+                                return exclude.test(item.name)
+                            } else {
+                                return item.name === exclude
+                            }
+                        })
                     })
-                })
-            }
-
-            // only keep cacheNodes with include
-            if (!isNil(props.include)) {
-                const include = isArr(props.include) ? props.include : [props.include]
-                prevCacheNodes = prevCacheNodes.filter(item => {
-                    return include.some(include => {
-                        if (isRegExp(include)) {
-                            return include.test(item.name)
-                        } else {
-                            return item.name === include
-                        }
-                    })
-                })
-            }
-
-            const lastActiveTime = Date.now()
-
-            const cacheNode = prevCacheNodes.find(item => item.name === activeName)
-
-            if (cacheNode) {
-                return prevCacheNodes.map(item => {
-                    if (item.name === activeName) {
-                        onBeforeActive && onBeforeActive(activeName)
-                        return { name: activeName, cache, lastActiveTime, ele: children }
-                    }
-                    return item
-                })
-            } else {
-                onBeforeActive && onBeforeActive(activeName)
-                if (prevCacheNodes.length >= max) {
-                    const removeStrategyFunc = RemoveStrategies[strategy]
-                    if (removeStrategyFunc) {
-                        prevCacheNodes = removeStrategyFunc(prevCacheNodes)
-                    } else {
-                        throw new Error(`strategy ${strategy} is not supported`)
-                    }
                 }
-                return [...prevCacheNodes, { name: activeName, cache, lastActiveTime, ele: children }]
-            }
+    
+                // only keep cacheNodes with include
+                if (!isNil(props.include)) {
+                    const include = isArr(props.include) ? props.include : [props.include]
+                    prevCacheNodes = prevCacheNodes.filter(item => {
+                        return include.some(include => {
+                            if (isRegExp(include)) {
+                                return include.test(item.name)
+                            } else {
+                                return item.name === include
+                            }
+                        })
+                    })
+                }
+    
+                const lastActiveTime = Date.now()
+    
+                const cacheNode = prevCacheNodes.find(item => item.name === activeName)
+    
+                if (cacheNode) {
+                    return prevCacheNodes.map(item => {
+                        if (item.name === activeName) {
+                            onBeforeActive && onBeforeActive(activeName)
+                            return { name: activeName, cache, lastActiveTime, ele: children }
+                        }
+                        return item
+                    })
+                } else {
+                    onBeforeActive && onBeforeActive(activeName)
+                    if (prevCacheNodes.length >= max) {
+                        const removeStrategyFunc = RemoveStrategies[strategy]
+                        if (removeStrategyFunc) {
+                            prevCacheNodes = removeStrategyFunc(prevCacheNodes)
+                        } else {
+                            throw new Error(`strategy ${strategy} is not supported`)
+                        }
+                    }
+                    return [...prevCacheNodes, { name: activeName, cache, lastActiveTime, ele: children }]
+                }
+            })
         })
     }, [children, activeName, setCacheNodes, max, cache, strategy, props.exclude, props.include])
 
