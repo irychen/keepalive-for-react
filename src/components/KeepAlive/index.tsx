@@ -4,7 +4,6 @@ import {
     MutableRefObject,
     ReactNode,
     RefObject,
-    startTransition,
     useCallback,
     useImperativeHandle,
     useLayoutEffect,
@@ -13,6 +12,7 @@ import {
 } from "react"
 import CacheComponent from "../CacheComponent"
 import { isArr, isNil, isRegExp } from "../../utils"
+import { safeStartTransition } from "../../compat/useTransition"
 
 type Strategy = "PRE" | "LRU"
 
@@ -168,11 +168,11 @@ function KeepAlive(props: Props) {
 
     useLayoutEffect(() => {
         if (isNil(activeName)) return
-        startTransition(() => {
+        safeStartTransition(() => {
             setCacheNodes(prevCacheNodes => {
                 // remove cacheNodes with cache false node
                 prevCacheNodes = prevCacheNodes.filter(item => item.cache)
-    
+
                 // remove cacheNodes with exclude
                 if (!isNil(props.exclude)) {
                     const exclude = isArr(props.exclude) ? props.exclude : [props.exclude]
@@ -186,7 +186,7 @@ function KeepAlive(props: Props) {
                         })
                     })
                 }
-    
+
                 // only keep cacheNodes with include
                 if (!isNil(props.include)) {
                     const include = isArr(props.include) ? props.include : [props.include]
@@ -200,11 +200,11 @@ function KeepAlive(props: Props) {
                         })
                     })
                 }
-    
+
                 const lastActiveTime = Date.now()
-    
+
                 const cacheNode = prevCacheNodes.find(item => item.name === activeName)
-    
+
                 if (cacheNode) {
                     return prevCacheNodes.map(item => {
                         if (item.name === activeName) {
