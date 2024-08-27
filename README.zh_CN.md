@@ -198,6 +198,7 @@ interface Props {
      *
      * example:
      * ```tsx
+     * // if your react version is 18 or higher, you don't need to use onBeforeActive fix the style flashing issue
      * // fix the style flashing issue when using Antd Dropdown and Select components, which occurs when the components are wrapped by Suspense and cached.
      *
      * // set .ant-select-dropdown .ant-picker-dropdown style to ''
