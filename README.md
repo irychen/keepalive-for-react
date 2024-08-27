@@ -286,12 +286,4 @@ Preview Online Demo: [Link: https://irychen.github.io/react-keepalive-demo/](htt
 
 - [Discord](https://discord.gg/ycf896w7eA)
 
-## Star History
 
-<a href="https://star-history.com/#irychen/keepalive-for-react&Timeline">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=irychen/keepalive-for-react&type=Timeline&theme=dark" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=irychen/keepalive-for-react&type=Timeline" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=irychen/keepalive-for-react&type=Timeline" />
- </picture>
-</a>
