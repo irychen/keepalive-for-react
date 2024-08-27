@@ -12,7 +12,7 @@ import {
 } from "react"
 import CacheComponent from "../CacheComponent"
 import { isArr, isNil, isRegExp } from "../../utils"
-import { safeStartTransition } from "../../compat/useTransition"
+import { safeStartTransition } from "../../compat/startTransition"
 
 type Strategy = "PRE" | "LRU"
 
@@ -76,6 +76,7 @@ interface Props {
      *
      * example:
      * ```tsx
+     * // if your react version is 18 or higher, you don't need to use onBeforeActive fix the style flashing issue
      * // fix the style flashing issue when using Antd Dropdown and Select components, which occurs when the components are wrapped by Suspense and cached.
      *
      * // set .ant-select-dropdown .ant-picker-dropdown style to ''
@@ -110,6 +111,7 @@ interface CacheNode {
     ele?: ReactNode
     cache: boolean
     lastActiveTime: number
+    renderCount: number
 }
 
 /**
@@ -136,11 +138,28 @@ const RemoveStrategies: Record<string, (nodes: CacheNode[]) => CacheNode[]> = {
 export type KeepAliveRef = {
     getCaches: () => Array<CacheNode>
 
+    /**
+     * remove cacheNode by name
+     * @param name cacheNode name to remove
+     * @returns
+     */
     removeCache: (name: string) => Promise<void>
 
+    /**
+     * clean all cacheNodes
+     */
     cleanAllCache: () => void
 
+    /**
+     * clean other cacheNodes except current active cacheNode
+     */
     cleanOtherCache: () => void
+
+    /**
+     * refresh cacheNode by name
+     * @param name cacheNode name to refresh if name is not provided, refresh current active cacheNode
+     */
+    refresh: (name?: string) => void
 }
 
 export function useKeepaliveRef() {
@@ -163,6 +182,7 @@ function KeepAlive(props: Props) {
         cacheDivClassName,
     } = props
 
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const containerDivRef = containerDivRefFromProps || useRef<HTMLDivElement>(null)
     const [cacheNodes, setCacheNodes] = useState<Array<CacheNode>>([])
 
@@ -209,7 +229,7 @@ function KeepAlive(props: Props) {
                     return prevCacheNodes.map(item => {
                         if (item.name === activeName) {
                             onBeforeActive && onBeforeActive(activeName)
-                            return { name: activeName, cache, lastActiveTime, ele: children }
+                            return { name: activeName, cache, lastActiveTime, ele: children, renderCount: item.renderCount }
                         }
                         return item
                     })
@@ -223,7 +243,7 @@ function KeepAlive(props: Props) {
                             throw new Error(`strategy ${strategy} is not supported`)
                         }
                     }
-                    return [...prevCacheNodes, { name: activeName, cache, lastActiveTime, ele: children }]
+                    return [...prevCacheNodes, { name: activeName, cache, lastActiveTime, ele: children, renderCount: 0 }]
                 }
             })
         })
@@ -251,6 +271,18 @@ function KeepAlive(props: Props) {
                     return [...cacheNodes.filter(item => item.name === activeName)]
                 })
             },
+
+            refresh: (name?: string) => {
+                setCacheNodes(cacheNodes => {
+                    const targetName = name || activeName
+                    return cacheNodes.map(item => {
+                        if (item.name === targetName) {
+                            return { ...item, renderCount: item.renderCount + 1 }
+                        }
+                        return item
+                    })
+                })
+            },
         }),
         [cacheNodes, setCacheNodes, activeName],
     )
@@ -264,6 +296,21 @@ function KeepAlive(props: Props) {
         [setCacheNodes],
     )
 
+    const refresh = useCallback(
+        (name?: string) => {
+            setCacheNodes(cacheNodes => {
+                const targetName = name || activeName
+                return cacheNodes.map(item => {
+                    if (item.name === targetName) {
+                        return { ...item, renderCount: item.renderCount + 1 }
+                    }
+                    return item
+                })
+            })
+        },
+        [setCacheNodes, activeName],
+    )
+
     return (
         <Fragment>
             <AnimationWrapper>
@@ -271,15 +318,17 @@ function KeepAlive(props: Props) {
             </AnimationWrapper>
             <SuspenseElement>
                 {cacheNodes.map(item => {
-                    const { name, ele } = item
+                    const { name, ele, renderCount } = item
                     return (
                         <CacheComponent
+                            renderCount={renderCount}
                             containerDivRef={containerDivRef}
                             key={name}
                             errorElement={errorElement}
                             active={activeName === name}
                             name={name}
                             destroy={destroy}
+                            refresh={refresh}
                             cacheDivClassName={cacheDivClassName}
                         >
                             {ele}

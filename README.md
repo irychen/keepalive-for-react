@@ -125,10 +125,10 @@ import {useKeepAliveContext} from 'keepalive-for-react';
 
 function CachedComponent() {
   
-  const { active, destroy} = useKeepAliveContext();
+  const { active, destroy, refresh} = useKeepAliveContext();
   // active: boolean, whether the component is active
   // destroy: () => void, destroy the component from cache
-
+  // refresh: (name?: string) => void, refresh the component from cache
   // ...
 }
 ```
@@ -195,6 +195,7 @@ interface Props {
      *
      * example:
      * ```tsx
+     * // if your react version is 18 or higher, you don't need to use onBeforeActive fix the style flashing issue
      * // fix the style flashing issue when using Antd Dropdown and Select components, which occurs when the components are wrapped by Suspense and cached.
      *
      * // set .ant-select-dropdown .ant-picker-dropdown style to ''
@@ -227,11 +228,28 @@ interface Props {
 type KeepAliveRef = {
     getCaches: () => Array<CacheNode>
 
+    /**
+     * remove cacheNode by name
+     * @param name cacheNode name to remove
+     * @returns
+     */
     removeCache: (name: string) => Promise<void>
 
+    /**
+     * clean all cacheNodes
+     */
     cleanAllCache: () => void
 
+    /**
+     * clean other cacheNodes except current active cacheNode
+     */
     cleanOtherCache: () => void
+
+    /**
+     * refresh cacheNode by name
+     * @param name cacheNode name to refresh if name is not provided, refresh current active cacheNode
+     */
+    refresh: (name?: string) => void
 }
 ```
 

@@ -10,23 +10,32 @@ import { isFn } from "../../utils"
 export interface KeepAliveContext {
     active: boolean
     destroy: () => void
+    refresh: (name?: string) => void
 }
 
 export const CacheComponentContext = createContext<KeepAliveContext>({
     active: false,
     destroy: () => {},
+    refresh: () => {},
 })
 
 const useCacheComponentContext = () => {
     return useContext(CacheComponentContext)
 }
 
-function CacheComponentProvider(props: { children: ReactNode; active: boolean; destroy: () => void }) {
-    const { children, active, destroy } = props
+interface CacheComponentProviderProps {
+    children: ReactNode
+    active: boolean
+    destroy: () => void
+    refresh: () => void
+}
+
+function CacheComponentProvider(props: CacheComponentProviderProps) {
+    const { children, active, destroy, refresh } = props
 
     const value = useMemo(() => {
-        return { active, destroy }
-    }, [active, destroy])
+        return { active, destroy, refresh }
+    }, [active, destroy, refresh])
 
     return <CacheComponentContext.Provider value={value}>{children}</CacheComponentContext.Provider>
 }
