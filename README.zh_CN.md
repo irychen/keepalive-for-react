@@ -127,9 +127,10 @@ import {useKeepAliveContext} from 'keepalive-for-react';
 
 function CachedComponent() {
   
-  const { active, destroy} = useKeepAliveContext();
+  const { active, destroy, refresh} = useKeepAliveContext();
   // active: boolean, 组件是否激活
   // destroy: () => void, 从缓存中销毁组件
+  // refresh: (name?: string) => void, 刷新缓存中的组件
 
   // ...
 }
@@ -229,11 +230,28 @@ interface Props {
 type KeepAliveRef = {
     getCaches: () => Array<CacheNode>
 
+    /**
+     * remove cacheNode by name
+     * @param name cacheNode name to remove
+     * @returns
+     */
     removeCache: (name: string) => Promise<void>
 
+    /**
+     * clean all cacheNodes
+     */
     cleanAllCache: () => void
 
+    /**
+     * clean other cacheNodes except current active cacheNode
+     */
     cleanOtherCache: () => void
+
+    /**
+     * refresh cacheNode by name
+     * @param name cacheNode name to refresh if name is not provided, refresh current active cacheNode
+     */
+    refresh: (name?: string) => void
 }
 ```
 
