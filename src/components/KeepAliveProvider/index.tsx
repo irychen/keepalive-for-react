@@ -27,7 +27,7 @@ interface CacheComponentProviderProps {
     children: ReactNode
     active: boolean
     destroy: () => void
-    refresh: () => void
+    refresh: (name?: string) => void
 }
 
 function CacheComponentProvider(props: CacheComponentProviderProps) {
@@ -57,7 +57,7 @@ export default MemoCacheComponentProvider
  * @param deps Dependencies to be passed to the useEffect hook.
  */
 export const useEffectOnActive = (cb: (active: boolean) => void | (() => void), skipMount = false, deps: DependencyList): void => {
-    const { active } = useCacheComponentContext() // 假设这个Hook返回一个对象，其中包含active状态
+    const { active } = useCacheComponentContext()
     const isMount = useRef<boolean>(false)
     useEffect(() => {
         if (skipMount && !isMount.current) {
@@ -83,7 +83,7 @@ export const useEffectOnActive = (cb: (active: boolean) => void | (() => void), 
  * @param deps Dependencies to be passed to the useLayoutEffect hook.
  */
 export const useLayoutEffectOnActive = (cb: (active: boolean) => void | (() => void), skipMount = false, deps: DependencyList): void => {
-    const { active } = useCacheComponentContext() // 假设这个Hook返回一个对象，其中包含active状态
+    const { active } = useCacheComponentContext()
     const isMount = useRef<boolean>(false)
     useLayoutEffect(() => {
         if (skipMount && !isMount.current) {
