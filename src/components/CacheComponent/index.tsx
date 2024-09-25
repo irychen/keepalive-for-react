@@ -36,13 +36,21 @@ function CacheComponent(props: Props) {
         const cacheDiv = document.createElement("div")
         cacheDiv.setAttribute("data-name", name)
         cacheDiv.setAttribute("style", "height: 100%")
+        cacheDiv.setAttribute("data-render-count", renderCount.toString())
         cacheDiv.className = cacheDivClassName
         return cacheDiv
-    }, [renderCount])
+    }, [renderCount, cacheDivClassName])
 
     useLayoutEffect(() => {
         const containerDiv = containerDivRef.current
         cacheDiv.classList.remove("active", "inactive")
+        // check if the cacheDiv is already in the containerDiv
+        if (containerDiv?.childNodes.length !== 0) {
+            // remove all the childNodes
+            containerDiv?.childNodes.forEach(node => {
+                containerDiv?.removeChild(node)
+            })
+        }
         if (active) {
             containerDiv?.appendChild(cacheDiv)
             cacheDiv.classList.add("active")
@@ -54,7 +62,7 @@ function CacheComponent(props: Props) {
                 containerDiv?.removeChild(cacheDiv)
             }
         }
-    }, [active, containerDivRef, cacheDiv])
+    }, [active, containerDivRef, cacheDiv, cacheDivClassName, renderCount])
 
     const cacheDestroy = useCallback(() => {
         destroy(name)
