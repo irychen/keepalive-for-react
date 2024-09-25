@@ -39,19 +39,19 @@ function CacheComponent(props: Props) {
         cacheDiv.setAttribute("data-render-count", renderCount.toString())
         cacheDiv.className = cacheDivClassName
         return cacheDiv
-    }, [renderCount, cacheDivClassName])
+    }, [renderCount])
 
     useLayoutEffect(() => {
         const containerDiv = containerDivRef.current
         cacheDiv.classList.remove("active", "inactive")
-        // check if the cacheDiv is already in the containerDiv
-        if (containerDiv?.childNodes.length !== 0) {
-            // remove all the childNodes
-            containerDiv?.childNodes.forEach(node => {
-                containerDiv?.removeChild(node)
-            })
-        }
         if (active) {
+            // check if the containerDiv has childNodes
+            if (containerDiv?.childNodes.length !== 0) {
+                // remove all the childNodes
+                containerDiv?.childNodes.forEach(node => {
+                    containerDiv?.removeChild(node)
+                })
+            }
             containerDiv?.appendChild(cacheDiv)
             cacheDiv.classList.add("active")
             cacheDiv.setAttribute("data-active", "true")
@@ -62,7 +62,7 @@ function CacheComponent(props: Props) {
                 containerDiv?.removeChild(cacheDiv)
             }
         }
-    }, [active, containerDivRef, cacheDiv, cacheDivClassName, renderCount])
+    }, [active, containerDivRef, cacheDiv])
 
     const cacheDestroy = useCallback(() => {
         destroy(name)
