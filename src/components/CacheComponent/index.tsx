@@ -14,6 +14,7 @@ interface Props {
     refresh: (name?: string) => void
     cacheDivClassName?: string
     renderCount: number
+    async: boolean
 }
 
 function CacheComponent(props: Props) {
@@ -27,6 +28,7 @@ function CacheComponent(props: Props) {
         errorElement: ErrorBoundary = Fragment,
         cacheDivClassName = `cache-component`,
         renderCount,
+        async,
     } = props
     const activatedRef = useRef(false)
 
@@ -52,9 +54,17 @@ function CacheComponent(props: Props) {
                     containerDiv?.removeChild(node)
                 })
             }
-            containerDiv?.appendChild(cacheDiv)
-            cacheDiv.classList.add("active")
-            cacheDiv.setAttribute("data-active", "true")
+            if (async) {
+                setTimeout(() => {
+                    containerDiv?.appendChild(cacheDiv)
+                    cacheDiv.classList.add("active")
+                    cacheDiv.setAttribute("data-active", "true")
+                }, 0)
+            } else {
+                containerDiv?.appendChild(cacheDiv)
+                cacheDiv.classList.add("active")
+                cacheDiv.setAttribute("data-active", "true")
+            }
         } else {
             if (containerDiv?.contains(cacheDiv)) {
                 cacheDiv.setAttribute("data-active", "false")

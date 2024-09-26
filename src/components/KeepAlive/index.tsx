@@ -84,6 +84,8 @@ interface Props {
      *  cacheDivClassName: className set for cacheNodes
      */
     cacheDivClassName?: string
+
+    async?: boolean
 }
 
 interface CacheNode {
@@ -160,6 +162,7 @@ function KeepAlive(props: Props) {
         onBeforeActive,
         containerDivRef: containerDivRefFromProps,
         cacheDivClassName,
+        async = false,
     } = props
 
     // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -301,6 +304,7 @@ function KeepAlive(props: Props) {
                     const { name, ele, renderCount } = item
                     return (
                         <CacheComponent
+                            async={async}
                             renderCount={renderCount}
                             containerDivRef={containerDivRef}
                             key={name}
