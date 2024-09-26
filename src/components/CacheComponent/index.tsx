@@ -80,7 +80,7 @@ function CacheComponent(props: Props) {
             if (containerDiv?.contains(cacheDiv)) {
                 cacheDiv.setAttribute("data-active", "false")
                 cacheDiv.classList.add("inactive")
-                containerDiv?.removeChild(cacheDiv)
+                cacheDiv.remove()
             }
         }
     }, [active, containerDivRef, cacheDiv])
