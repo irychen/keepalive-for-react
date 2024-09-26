@@ -15,6 +15,7 @@ interface Props {
     cacheDivClassName?: string
     renderCount: number
     async: boolean
+    microAsync: boolean
 }
 
 function CacheComponent(props: Props) {
@@ -29,6 +30,7 @@ function CacheComponent(props: Props) {
         cacheDivClassName = `cache-component`,
         renderCount,
         async,
+        microAsync,
     } = props
     const activatedRef = useRef(false)
 
@@ -46,6 +48,13 @@ function CacheComponent(props: Props) {
     useLayoutEffect(() => {
         const containerDiv = containerDivRef.current
         cacheDiv.classList.remove("active", "inactive")
+
+        function renderCacheDiv() {
+            containerDiv?.appendChild(cacheDiv)
+            cacheDiv.classList.add("active")
+            cacheDiv.setAttribute("data-active", "true")
+        }
+
         if (active) {
             // check if the containerDiv has childNodes
             if (containerDiv?.childNodes.length !== 0) {
@@ -55,15 +64,17 @@ function CacheComponent(props: Props) {
                 })
             }
             if (async) {
-                setTimeout(() => {
-                    containerDiv?.appendChild(cacheDiv)
-                    cacheDiv.classList.add("active")
-                    cacheDiv.setAttribute("data-active", "true")
-                }, 0)
+                if (microAsync) {
+                    Promise.resolve().then(() => {
+                        renderCacheDiv()
+                    })
+                } else {
+                    setTimeout(() => {
+                        renderCacheDiv()
+                    }, 0)
+                }
             } else {
-                containerDiv?.appendChild(cacheDiv)
-                cacheDiv.classList.add("active")
-                cacheDiv.setAttribute("data-active", "true")
+                renderCacheDiv()
             }
         } else {
             if (containerDiv?.contains(cacheDiv)) {

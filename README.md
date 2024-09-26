@@ -223,6 +223,14 @@ interface Props {
      *  cacheDivClassName: className set for cacheNodes
      */
     cacheDivClassName?: string
+    /**
+     * async: whether to use async to render current cacheNode default false
+     */
+    async?: boolean
+    /**
+     * microAsync: whether to use microAsync to render current cacheNode default true
+     */
+    microAsync?: boolean
 }
 
 type KeepAliveRef = {

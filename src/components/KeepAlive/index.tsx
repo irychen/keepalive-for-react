@@ -85,7 +85,14 @@ interface Props {
      */
     cacheDivClassName?: string
 
+    /**
+     * async: whether to use async to render current cacheNode default false
+     */
     async?: boolean
+    /*
+     * microAsync: whether to use microAsync to render current cacheNode default true
+     */
+    microAsync?: boolean
 }
 
 interface CacheNode {
@@ -163,6 +170,7 @@ function KeepAlive(props: Props) {
         containerDivRef: containerDivRefFromProps,
         cacheDivClassName,
         async = false,
+        microAsync = true,
     } = props
 
     // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -305,6 +313,7 @@ function KeepAlive(props: Props) {
                     return (
                         <CacheComponent
                             async={async}
+                            microAsync={microAsync}
                             renderCount={renderCount}
                             containerDivRef={containerDivRef}
                             key={name}
