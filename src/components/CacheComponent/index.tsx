@@ -1,4 +1,4 @@
-import { ComponentType, Fragment, memo, ReactNode, RefObject, useCallback, useLayoutEffect, useMemo, useRef } from "react"
+import { ComponentType, Fragment, memo, ReactNode, RefObject, useCallback, useMemo, useRef } from "react"
 import { createPortal } from "react-dom"
 import MemoCacheComponentProvider from "../KeepAliveProvider"
 
@@ -45,45 +45,43 @@ function CacheComponent(props: Props) {
         return cacheDiv
     }, [renderCount])
 
-    useLayoutEffect(() => {
-        const containerDiv = containerDivRef.current
-        cacheDiv.classList.remove("active", "inactive")
+    const containerDiv = containerDivRef.current
+    cacheDiv.classList.remove("active", "inactive")
 
-        function renderCacheDiv() {
-            containerDiv?.appendChild(cacheDiv)
-            cacheDiv.classList.add("active")
-            cacheDiv.setAttribute("data-active", "true")
+    function renderCacheDiv() {
+        containerDiv?.appendChild(cacheDiv)
+        cacheDiv.classList.add("active")
+        cacheDiv.setAttribute("data-active", "true")
+    }
+
+    if (active) {
+        // check if the containerDiv has childNodes
+        if (containerDiv?.childNodes.length !== 0) {
+            // remove all the childNodes
+            containerDiv?.childNodes.forEach(node => {
+                containerDiv?.removeChild(node)
+            })
         }
-
-        if (active) {
-            // check if the containerDiv has childNodes
-            if (containerDiv?.childNodes.length !== 0) {
-                // remove all the childNodes
-                containerDiv?.childNodes.forEach(node => {
-                    containerDiv?.removeChild(node)
+        if (async) {
+            if (microAsync) {
+                Promise.resolve().then(() => {
+                    renderCacheDiv()
                 })
-            }
-            if (async) {
-                if (microAsync) {
-                    Promise.resolve().then(() => {
-                        renderCacheDiv()
-                    })
-                } else {
-                    setTimeout(() => {
-                        renderCacheDiv()
-                    }, 0)
-                }
             } else {
-                renderCacheDiv()
+                setTimeout(() => {
+                    renderCacheDiv()
+                }, 0)
             }
         } else {
-            if (containerDiv?.contains(cacheDiv)) {
-                cacheDiv.setAttribute("data-active", "false")
-                cacheDiv.classList.add("inactive")
-                cacheDiv.remove()
-            }
+            renderCacheDiv()
         }
-    }, [active, containerDivRef, cacheDiv])
+    } else {
+        if (containerDiv?.contains(cacheDiv)) {
+            cacheDiv.setAttribute("data-active", "false")
+            cacheDiv.classList.add("inactive")
+            cacheDiv.remove()
+        }
+    }
 
     const cacheDestroy = useCallback(() => {
         destroy(name)
