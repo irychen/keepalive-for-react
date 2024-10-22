@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="180" src="./react-keepalive.png" alt="keepalive-for-react logo">
+  <img width="120" src="./react-keepalive.png" alt="keepalive-for-react logo">
 </p>
 
 <div align="center">
@@ -8,286 +8,255 @@
   </h1>
 </div>
 
-<p align="center">A React KeepAlive component like keep-alive in vue</p>
+<p align="center">一个类似 Vue keep-alive 的 React 组件</p>
 
-中文 | [English](./README.md)
+[English](./README.md) | 中文
 
-[![NPM版本](https://img.shields.io/npm/v/keepalive-for-react.svg?style=flat)](https://npmjs.com/package/keepalive-for-react) [![NPM下载](https://img.shields.io/npm/dm/keepalive-for-react.svg?style=flat)](https://npmjs.com/package/keepalive-for-react)
-
-## 介绍
-
-一个类似于Vue中keep-alive的React KeepAlive组件
-
-### 注意！
-
-- 请勿使用 `<React.StrictMode />`，它无法在开发模式下与keepalive-for-react协同工作。因为当你使用keepalive-for-react的useOnActive钩子时，它可能会导致一些意外行为。
-
-- 在Router中仅支持react-router-dom v6+ 版本
+[![NPM version](https://img.shields.io/npm/v/keepalive-for-react.svg?style=flat)](https://npmjs.com/package/keepalive-for-react) [![NPM downloads](https://img.shields.io/npm/dm/keepalive-for-react.svg?style=flat)](https://npmjs.com/package/keepalive-for-react)
 
 ## 特性
 
-- 支持react 16.8+ ~ 18+
-- 显著减少页面中的DOM元素数量
-- 支持缓存组件状态
-- 简单实现，无需任何额外依赖和黑客方法
-- 支持自定义缓存规则
-- 高性能，无性能损失
-- 易于使用，只需包装你想要缓存的组件
+- 支持 react-router-dom v6+
+- 支持 React v16+ ~ v18+
+- 支持 Suspense 和 懒加载
+- 支持错误边界
+- 支持自定义容器
+- 支持使用 `active` 和 `inactive` className 实现切换动画
+- 简单实现，无任何额外依赖和黑魔法
 
-## 使用方法
+## 注意事项
 
-### 安装
+- 不要使用 <React.StrictMode />，在开发模式下它无法与 keepalive-for-react 一起工作，会导致一些意外的行为。
 
-#### npm
+- 路由部分仅支持 react-router-dom v6+
+
+## 安装
 
 ```bash
-npm install --save keepalive-for-react 
+npm install keepalive-for-react
 ```
 
-### API
+```bash
+yarn add keepalive-for-react
+```
 
-#### KeepAlive
+```bash
+pnpm add keepalive-for-react
+```
 
-在简单的标签页中
+## 使用
+
+### 在 react-router-dom v6+ 中使用
+
+1. 安装 react-router-dom v6+
+
+```bash
+npm install react-router-dom keepalive-for-react
+```
+
+2. 在项目中使用 KeepAlive
 
 ```tsx
-import KeepAlive from 'keepalive-for-react';
+import { KeepAliveRouteOutlet } from "keepalive-for-react";
 
-function TabsPage() {
-  const tabs = [
-    {name: 'Tab1', cache: true, component: Tab1,},
-    {name: 'Tab2', cache: true, component: Tab2,},
-    {name: 'Tab3', cache: false, component: Tab3,},
-  ];
-  const [activeTab, setActiveTab] = useState('Tab1');
-
-  const page = useMemo(() => {
-    return tabs.find(tab => tab.name === activeTab);
-  }, [activeTab]);
-
-  return   <div>
-    <KeepAlive
-      max={20} strategy={'PRE'} activeName={activeTab} cache={page?.cache}
-    >
-      {page && <page.component name={page.name} />}
-    </KeepAlive>
-  </div>
+function Layout() {
+    return (
+        <div className="layout">
+            <KeepAliveRouteOutlet />
+        </div>
+    );
 }
 ```
 
+详细示例请查看 [examples/react-router-dom-simple-starter](./examples/react-router-dom-simple-starter)
 
-在react-router-dom中 v6+
+### 在简单的标签页中使用
+
+```bash
+npm install keepalive-for-react
+```
 
 ```tsx
-import {useLocation, useOutlet} from 'react-router-dom';
+const tabs = [
+    {
+        key: "tab1",
+        label: "标签页 1",
+        component: Tab1,
+    },
+    {
+        key: "tab2",
+        label: "标签页 2", 
+        component: Tab2,
+    },
+    {
+        key: "tab3",
+        label: "标签页 3",
+        component: Tab3,
+    },
+];
 
-function BasicLayoutWithCache() {
-  
-  const outlet = useOutlet();
-  const location = useLocation();
+function App() {
+    const [currentTab, setCurrentTab] = useState<string>("tab1");
 
+    const tab = useMemo(() => {
+        return tabs.find(tab => tab.key === currentTab);
+    }, [currentTab]);
 
-  /**
-   * 用于区分不同页面以进行缓存
-   */
-  const cacheKey = useMemo(() => {
-    return location.pathname + location.search;
-  }, [location]);
-
-
-  return <div>
-    <KeepAlive activeName={cacheKey} max={10} strategy={'LRU'}>
-      {outlet}
-    </KeepAlive>
-  </div>
+    return (
+        <div>
+            {/* ... */}
+            <KeepAlive transition={true} activeCacheKey={currentTab} exclude={["tab3"]}>
+                {tab && <tab.component />}
+            </KeepAlive>
+        </div>
+    );
 }
 ```
 
+详细示例请查看 [examples/simple-tabs-starter](./examples/simple-tabs-starter)
 
-#### useEffectOnActive / useLayoutEffectOnActive
+## KeepAlive 属性
 
-useEffectOnActive是一个钩子，用于监听被KeepAlive包装的组件的激活状态。
-
-```tsx
-
-import {useEffectOnActive} from 'keepalive-for-react';
-
-useEffectOnActive((active) => {
-    console.log('useOnActive', active);
-}, false, []);
-
-```
-
-#### useKeepAliveContext
-
-useKeepAliveContext是一个钩子，用于获取KeepAlive CacheComponent上下文。
+类型定义
 
 ```tsx
-import {useKeepAliveContext} from 'keepalive-for-react';
-
-function CachedComponent() {
-  
-  const { active, destroy, refresh} = useKeepAliveContext();
-  // active: boolean, 组件是否激活
-  // destroy: () => void, 从缓存中销毁组件
-  // refresh: (name?: string) => void, 刷新缓存中的组件
-
-  // ...
-}
-```
-
-### KeepAlive Props
-
-```tsx
-interface Props {
-    children: ReactNode;
+interface KeepAliveProps {
+    // 决定哪个组件处于激活状态
+    activeCacheKey: string;
+    children?: KeepAliveChildren;
     /**
-     * active name
-     */
-    activeName: string;
-    /**
-     * max cache count default 10
+     * 最大缓存数量，默认 10
      */
     max?: number;
-    /**
-     * cache: boolean default true
-     */
-    cache?: boolean;
-    /**
-     * maxRemoveStrategy: 'PRE' | 'LRU' default 'PRE'
-     *
-     * PRE: remove the first cacheNode
-     *
-     * LRU: remove the least recently used cacheNode
-     */
-    strategy?: "PRE" | "LRU";
-    /**
-     * aliveRef: KeepAliveRef
-     *
-     * aliveRef is a ref to get caches, remove cache by name, clean all cache, clean other cache except current
-     *
-     */
-    aliveRef?: RefObject<KeepAliveRef | undefined> | MutableRefObject<KeepAliveRef | undefined>;
-
     exclude?: Array<string | RegExp> | string | RegExp;
-
     include?: Array<string | RegExp> | string | RegExp;
-
-    /**
-     * suspenseElement: Suspense Wrapper Component
-     */
-    suspenseElement?: ComponentType<{
-        children: ReactNode,
-    }>;
-
-    /**
-     *  errorElement: for every cacheNode's ErrorBoundary
-     */
+    onBeforeActive?: (activeCacheKey: string) => void;
+    customContainerRef?: RefObject<HTMLDivElement>;
+    cacheNodeClassName?: string;
+    containerClassName?: string;
     errorElement?: ComponentType<{
-        children: ReactNode,
+        children: ReactNode;
     }>;
-    animationWrapper?: ComponentType<{
-        children: ReactNode
-    }>
-
     /**
-     * onBeforeActive: callback before active
-     * @param name
-     *
-     * you can do something before active like set style for dropdown
-     *
-     * example:
-     * ```tsx
-     * // if your react version is 18 or higher, you don't need to use onBeforeActive fix the style flashing issue
-     * // fix the style flashing issue when using Antd Dropdown and Select components, which occurs when the components are wrapped by Suspense and cached.
-     *
-     * // set .ant-select-dropdown .ant-picker-dropdown style to ''
-     * const dropdowns = document.querySelectorAll('.ant-select-dropdown');
-     * dropdowns.forEach(dropdown => {
-     *     if (dropdown) {
-     *         dropdown.setAttribute('style', '');
-     *     }
-     * });
-     *
-     * const pickerDropdowns = document.querySelectorAll('.ant-picker-dropdown');
-     * pickerDropdowns.forEach(pickerDropdown => {
-     *     if (pickerDropdown) {
-     *         pickerDropdown.setAttribute('style', '');
-     *     }
-     * });
-     * ```
+     * 切换动画，默认 false
      */
-    onBeforeActive?: (name: string) => void
+    transition?: boolean;
     /**
-     *  containerDivRef: root node to mount cacheNodes
+     * 过渡持续时间，默认 200ms
      */
-    containerDivRef?: MutableRefObject<HTMLDivElement>
-    /**
-     *  cacheDivClassName: className set for cacheNodes
-     */
-    cacheDivClassName?: string
-    /**
-     * async: whether to use async to render current cacheNode default false
-     */
-    async?: boolean
-    /**
-     * microAsync: whether to use microAsync to render current cacheNode default true
-     */
-    microAsync?: boolean
-}
-
-type KeepAliveRef = {
-    getCaches: () => Array<CacheNode>
-
-    /**
-     * remove cacheNode by name
-     * @param name cacheNode name to remove
-     * @returns
-     */
-    removeCache: (name: string) => Promise<void>
-
-    /**
-     * clean all cacheNodes
-     */
-    cleanAllCache: () => void
-
-    /**
-     * clean other cacheNodes except current active cacheNode
-     */
-    cleanOtherCache: () => void
-
-    /**
-     * refresh cacheNode by name
-     * @param name cacheNode name to refresh if name is not provided, refresh current active cacheNode
-     */
-    refresh: (name?: string) => void
+    duration?: number;
+    aliveRef?: RefObject<KeepAliveRef | undefined>;
 }
 ```
 
-#### useKeepaliveRef
+## Hooks
+
+### useEffectOnActive
 
 ```tsx
-import { useKeepaliveRef } from "keepalive-for-react"
-
-function Example() {
-
-    const aliveRef = useKeepaliveRef()
-    
-    function clean(){
-        aliveRef.current?.cleanAllCache()
-    }
-    // ...
-    
-    return <KeepAlive aliveRef={aliveRef} >
-        ...
-    </KeepAlive>
-}
-
+useEffectOnActive(() => {
+    console.log("激活");
+}, []);
 ```
 
+### useLayoutEffectOnActive
 
-## 完整代码使用示例
+```tsx
+useLayoutEffectOnActive(
+    () => {
+        console.log("激活");
+    },
+    [],
+    false, 
+); 
+// 第三个参数是可选的，默认为 true
+// 表示在首次渲染时是否跳过回调执行
+```
 
-链接到 [React Keepalive Demo Repo](https://github.com/irychen/react-keepalive-demo)
+### useKeepAliveContext
 
-在线预览Demo: [链接: https://irychen.github.io/react-keepalive-demo/](https://irychen.github.io/react-keepalive-demo/)
+类型定义
+
+```ts
+interface KeepAliveContext {
+    /**
+     * 组件是否处于激活状态
+     */
+    active: boolean;
+    /**
+     * 刷新组件
+     * @param cacheKey - 组件的缓存键,
+     * 如果未提供，将刷新当前激活缓存的组件
+     */
+    refresh: (cacheKey?: string) => void;
+}
+```
+
+```tsx
+const { active, refresh } = useKeepAliveContext();
+// active 是一个布尔值,true 表示激活,false 表示未激活
+// refresh 是一个函数,可以调用它来刷新组件
+```
+
+### useKeepaliveRef 
+
+类型定义
+
+```ts
+interface KeepAliveRef {
+    refresh: (cacheKey?: string) => void;
+    destroy: (cacheKey: string) => Promise<void>;
+}
+```
+
+```tsx
+function App() {
+    const aliveRef = useKeepaliveRef();
+    // aliveRef.current 是一个 KeepAliveRef 对象
+
+    // 你可以在 aliveRef.current 上调用 refresh 和 destroy
+    aliveRef.current?.refresh();
+    aliveRef.current?.destroy();
+
+    return <KeepAlive aliveRef={aliveRef}>{/* ... */}</KeepAlive>;
+}
+// 或者
+function AppRouter() {
+    const aliveRef = useKeepaliveRef(); 
+    // aliveRef.current 是一个 KeepAliveRef 对象
+
+    // 你可以在 aliveRef.current 上调用 refresh 和 destroy
+    aliveRef.current?.refresh();
+    // 通常不需要手动调用 destroy，KeepAlive 会自动处理
+    aliveRef.current?.destroy();
+
+    return <KeepAliveRouteOutlet aliveRef={aliveRef} />;
+}
+```
+
+## 开发
+
+安装依赖
+
+```bash
+pnpm install
+```
+
+构建包
+
+```bash
+pnpm build
+```
+
+链接到全局
+
+```bash
+pnpm link --global
+```
+
+在 demo 项目中测试
+
+```bash
+cd demo
+pnpm link --global keepalive-for-react
+```

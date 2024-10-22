@@ -1,17 +1,17 @@
-import babel from '@rollup/plugin-babel';
-import typescript from "@rollup/plugin-typescript";
-import {nodeResolve} from '@rollup/plugin-node-resolve';
-import commonjs from '@rollup/plugin-commonjs';
-import terser from '@rollup/plugin-terser';
+import { nodeResolve } from "@rollup/plugin-node-resolve"
+import typescript from "@rollup/plugin-typescript"
+import commonjs from "@rollup/plugin-commonjs"
+import terser from "@rollup/plugin-terser"
+import babel from "@rollup/plugin-babel"
 
 const commonConfig = {
-    input: 'src/index.ts',
-    external: ['react', 'react-dom'],
+    input: "src/index.ts",
+    external: ["react", "react-dom", "react-router-dom"],
     plugins: [
         nodeResolve(),
         babel({
-            exclude: 'node_modules/**',
-            babelHelpers: 'bundled',
+            exclude: "node_modules/**",
+            babelHelpers: "bundled",
         }),
         typescript(),
         commonjs(),
@@ -27,7 +27,6 @@ const config = [
             exports: "named",
             format: "esm",
         },
-
     },
     {
         ...commonConfig,
@@ -37,5 +36,5 @@ const config = [
             format: "cjs",
         },
     },
-];
-export default config;
+]
+export default config

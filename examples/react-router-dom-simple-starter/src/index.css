@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 
+keepalive-for-react animation example
+transition should be set true to enable animation
+and duration should be set to the animation duration
+*/
+
+.cache-component.active {
+    animation: fadeIn 0.3s ease-in-out, slideIn 0.3s ease-in-out;
+}
+
+.cache-component.inactive {
+    animation: fadeOut 0.3s ease-in-out, slideOut 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(-100%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(100%);
+    }
+}

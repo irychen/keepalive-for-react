@@ -1,103 +1,109 @@
-import { ComponentType, Fragment, memo, ReactNode, RefObject, useCallback, useMemo, useRef } from "react"
-import { createPortal } from "react-dom"
-import MemoCacheComponentProvider from "../KeepAliveProvider"
+import { ComponentType, Fragment, memo, ReactNode, RefObject, useMemo, useRef } from "react";
+import { createPortal } from "react-dom";
+import { delayAsync, domAttrSet } from "../../utils";
 
-interface Props {
-    containerDivRef: RefObject<HTMLDivElement>
-    active: boolean
-    name: string
+export interface CacheComponentProps {
+    children: ReactNode;
     errorElement?: ComponentType<{
-        children: ReactNode
-    }>
-    children: ReactNode
-    destroy: (name: string) => void
-    refresh: (name?: string) => void
-    cacheDivClassName?: string
-    renderCount: number
-    async: boolean
-    microAsync: boolean
+        children: ReactNode;
+    }>;
+    containerDivRef: RefObject<HTMLDivElement>;
+    cacheNodeClassName: string;
+    renderCount: number;
+    active: boolean;
+    cacheKey: string;
+    transition: boolean;
+    duration: number;
+    isCached: (cacheKey: string) => boolean;
+    destroy: (cacheKey: string) => Promise<void>;
 }
 
-function CacheComponent(props: Props) {
-    const {
-        containerDivRef,
-        active,
-        children,
-        destroy,
-        name,
-        refresh,
-        errorElement: ErrorBoundary = Fragment,
-        cacheDivClassName = `cache-component`,
-        renderCount,
-        async,
-        microAsync,
-    } = props
-    const activatedRef = useRef(false)
+const CacheComponent = memo(
+    function (props: CacheComponentProps): any {
+        const { errorElement: ErrorBoundary = Fragment, cacheNodeClassName, children, cacheKey, isCached } = props;
+        const { active, renderCount, destroy, transition, duration, containerDivRef } = props;
+        const activatedRef = useRef(false);
 
-    activatedRef.current = activatedRef.current || active
+        const cached = isCached(cacheKey);
 
-    const cacheDiv = useMemo(() => {
-        const cacheDiv = document.createElement("div")
-        cacheDiv.setAttribute("data-name", name)
-        cacheDiv.setAttribute("style", "height: 100%")
-        cacheDiv.setAttribute("data-render-count", renderCount.toString())
-        cacheDiv.className = cacheDivClassName
-        return cacheDiv
-    }, [renderCount])
+        activatedRef.current = activatedRef.current || active;
 
-    const containerDiv = containerDivRef.current
-    cacheDiv.classList.remove("active", "inactive")
+        const cacheDiv = useMemo(() => {
+            const cacheDiv = document.createElement("div");
+            domAttrSet(cacheDiv)
+                .set("data-cache-key", cacheKey)
+                .set("data-cached", cached.valueOf().toString())
+                .set("style", "height: 100%")
+                .set("data-render-count", renderCount.toString());
+            cacheDiv.className = cacheNodeClassName;
+            return cacheDiv;
+        }, [renderCount, cacheNodeClassName]);
 
-    function renderCacheDiv() {
-        containerDiv?.appendChild(cacheDiv)
-        cacheDiv.classList.add("active")
-        cacheDiv.setAttribute("data-active", "true")
-    }
+        const containerDiv = containerDivRef.current;
 
-    if (active) {
-        // check if the containerDiv has childNodes
-        if (containerDiv?.childNodes.length !== 0) {
-            // remove all the childNodes
-            containerDiv?.childNodes.forEach(node => {
-                containerDiv?.removeChild(node)
-            })
-        }
-        if (async) {
-            if (microAsync) {
-                Promise.resolve().then(() => {
-                    renderCacheDiv()
-                })
-            } else {
-                setTimeout(() => {
-                    renderCacheDiv()
-                }, 0)
-            }
+        if (transition) {
+            (async () => {
+                if (active && containerDiv) {
+                    const activeNodes = prepareCacheContainer(containerDiv);
+                    // duration - 40ms is to avoid the animation effect ending too early
+                    await delayAsync(duration - 40);
+                    removeDivNodes(activeNodes);
+                    if (containerDiv.contains(cacheDiv)) {
+                        return;
+                    }
+                    renderCacheDiv(containerDiv, cacheDiv);
+                } else {
+                    if (!cached) {
+                        await delayAsync(duration);
+                        destroy(cacheKey);
+                    }
+                }
+            })();
         } else {
-            renderCacheDiv()
+            if (active && containerDiv) {
+                const activeNodes = prepareCacheContainer(containerDiv);
+                removeDivNodes(activeNodes);
+                if (containerDiv.contains(cacheDiv)) {
+                    return;
+                }
+                renderCacheDiv(containerDiv, cacheDiv);
+            } else {
+                if (!cached) {
+                    destroy(cacheKey);
+                }
+            }
         }
-    } else {
-        if (containerDiv?.contains(cacheDiv)) {
-            cacheDiv.setAttribute("data-active", "false")
-            cacheDiv.classList.add("inactive")
-            cacheDiv.remove()
+
+        function prepareCacheContainer(containerDiv: HTMLDivElement) {
+            const nodes = Array.from(containerDiv.children);
+            // change activeCacheDiv class active to inactive
+            const activeNodes = nodes.filter(node => node.classList.contains("active") && node.getAttribute("data-cache-key") !== cacheKey);
+            activeNodes.forEach(node => {
+                node.classList.remove("active");
+                node.classList.add("inactive");
+            });
+            return activeNodes;
         }
-    }
 
-    const cacheDestroy = useCallback(() => {
-        destroy(name)
-    }, [destroy, name])
+        function renderCacheDiv(containerDiv: HTMLDivElement, cacheDiv: HTMLDivElement) {
+            const removeNodes = Array.from(containerDiv.children);
+            removeDivNodes(removeNodes);
+            containerDiv.appendChild(cacheDiv);
+            cacheDiv.classList.remove("inactive");
+            cacheDiv.classList.add("active");
+        }
 
-    return activatedRef.current
-        ? createPortal(
-              <ErrorBoundary>
-                  <MemoCacheComponentProvider active={active} destroy={cacheDestroy} refresh={refresh}>
-                      {children}
-                  </MemoCacheComponentProvider>
-              </ErrorBoundary>,
-              cacheDiv,
-              name,
-          )
-        : null
-}
+        function removeDivNodes(nodes: Element[]) {
+            nodes.forEach(node => {
+                node.remove();
+            });
+        }
 
-export default memo(CacheComponent)
+        return activatedRef.current ? createPortal(<ErrorBoundary>{children}</ErrorBoundary>, cacheDiv, cacheKey) : null;
+    },
+    (prevProps, nextProps) => {
+        return prevProps.active === nextProps.active && prevProps.renderCount === nextProps.renderCount;
+    },
+);
+
+export default CacheComponent;

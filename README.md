@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="180" src="./react-keepalive.png" alt="keepalive-for-react logo">
+  <img width="120" src="./react-keepalive.png" alt="keepalive-for-react logo">
 </p>
 
 <div align="center">
@@ -14,284 +14,251 @@
 
 [![NPM version](https://img.shields.io/npm/v/keepalive-for-react.svg?style=flat)](https://npmjs.com/package/keepalive-for-react) [![NPM downloads](https://img.shields.io/npm/dm/keepalive-for-react.svg?style=flat)](https://npmjs.com/package/keepalive-for-react)
 
-
-**Attention!**
-
-- DO NOT use <React.StrictMode />, it CANNOT work with keepalive-for-react in development mode. because it can lead to
-some unexpected behavior when you use keepalive-for-react's useOnActive hook.
-
-- In Router only support react-router-dom v6+
-
 ## Features
 
-- support react 16.8+ ~ 18+
-- dramatically reduce the number of dom elements in the page
-- support for caching component state
-- simply implement, without any extra dependencies and hacking ways
-- support for custom cache rules
-- high performance, no performance loss
-- easy to use, just wrap the component you want to cache
+-   Support react-router-dom v6+
+-   Support React v16+ ~ v18+
+-   Support Suspense and Lazy import
+-   Support ErrorBoundary
+-   Support Custom Container
+-   Support Switching Animation Transition with className `active` and `inactive`
+-   Simply implement, without any extra dependencies and hacking ways
+
+## Attention
+
+-   DO NOT use <React.StrictMode />, it CANNOT work with keepalive-for-react in development mode. because it can lead to
+    some unexpected behavior when you use keepalive-for-react's useOnActive hook.
+
+-   In Router only support react-router-dom v6+
+
+## Install
+
+```bash
+npm install keepalive-for-react
+```
+
+```bash
+yarn add keepalive-for-react
+```
+
+```bash
+pnpm add keepalive-for-react
+```
 
 ## Usage
 
-### Install
+### in react-router-dom v6+
 
-#### npm
+1. install react-router-dom v6+
 
 ```bash
-npm install --save keepalive-for-react 
+npm install react-router-dom keepalive-for-react
 ```
 
-### APIs
-
-#### KeepAlive
-
-in simple tabs
+2. use KeepAlive in your project
 
 ```tsx
-import KeepAlive from 'keepalive-for-react';
+import { KeepAliveRouteOutlet } from "keepalive-for-react";
 
-function TabsPage() {
-  const tabs = [
-    {name: 'Tab1', cache: true, component: Tab1,},
-    {name: 'Tab2', cache: true, component: Tab2,},
-    {name: 'Tab3', cache: false, component: Tab3,},
-  ];
-  const [activeTab, setActiveTab] = useState('Tab1');
-
-  const page = useMemo(() => {
-    return tabs.find(tab => tab.name === activeTab);
-  }, [activeTab]);
-
-  return   <div>
-    <KeepAlive
-      max={20} strategy={'PRE'} activeName={activeTab} cache={page?.cache}
-    >
-      {page && <page.component name={page.name} />}
-    </KeepAlive>
-  </div>
+function Layout() {
+    return (
+        <div className="layout">
+            <KeepAliveRouteOutlet />
+        </div>
+    );
 }
 ```
 
+details see [examples/react-router-dom-simple-starter](./examples/react-router-dom-simple-starter)
 
-in react-router-dom v6+
+### in simple tabs
+
+```bash
+npm install keepalive-for-react
+```
 
 ```tsx
-import {useLocation, useOutlet} from 'react-router-dom';
 
-function BasicLayoutWithCache() {
-  
-  const outlet = useOutlet();
-  const location = useLocation();
+const tabs = [
+    {
+        key: "tab1",
+        label: "Tab 1",
+        component: Tab1,
+    },
+    {
+        key: "tab2",
+        label: "Tab 2",
+        component: Tab2,
+    },
+    {
+        key: "tab3",
+        label: "Tab 3",
+        component: Tab3,
+    },
+];
+
+function App() {
+    const [currentTab, setCurrentTab] = useState<string>("tab1");
+
+    const tab = useMemo(() => {
+        return tabs.find(tab => tab.key === currentTab);
+    }, [currentTab]);
 
 
-  /**
-   * to distinguish different pages to cache
-   */
-  const cacheKey = useMemo(() => {
-    return location.pathname + location.search;
-  }, [location]);
-
-
-  return <div>
-    <KeepAlive activeName={cacheKey} max={10} strategy={'LRU'}>
-      {outlet}
-    </KeepAlive>
-  </div>
+    return (
+        <div>
+            {/* ... */}
+            <KeepAlive transition={true} activeCacheKey={currentTab} exclude={["tab3"]}>
+                {tab && <tab.component />}
+            </KeepAlive>
+        </div>
+    );
 }
 ```
 
+details see [examples/simple-tabs-starter](./examples/simple-tabs-starter)
 
-#### useEffectOnActive / useLayoutEffectOnActive
+## KeepAlive Props
 
-useEffectOnActive is a hook to listen to the active state of the component which is wrapped by KeepAlive.
-
-```tsx
-
-import {useEffectOnActive} from 'keepalive-for-react';
-
-useEffectOnActive((active) => {
-    console.log('useOnActive', active);
-}, false, []);
-
-```
-
-#### useKeepAliveContext
-
-useKeepAliveContext is a hook to get the KeepAlive CacheComponent context.
+type definition
 
 ```tsx
-import {useKeepAliveContext} from 'keepalive-for-react';
-
-function CachedComponent() {
-  
-  const { active, destroy, refresh} = useKeepAliveContext();
-  // active: boolean, whether the component is active
-  // destroy: () => void, destroy the component from cache
-  // refresh: (name?: string) => void, refresh the component from cache
-  // ...
-}
-```
-
-### KeepAlive Props
-
-```tsx
-interface Props {
-    children: ReactNode;
-    /**
-     * active name
-     */
-    activeName: string;
+interface KeepAliveProps {
+    // determine which component to is active
+    activeCacheKey: string;
+    children?: KeepAliveChildren;
     /**
      * max cache count default 10
      */
     max?: number;
-    /**
-     * cache: boolean default true
-     */
-    cache?: boolean;
-    /**
-     * maxRemoveStrategy: 'PRE' | 'LRU' default 'PRE'
-     *
-     * PRE: remove the first cacheNode
-     *
-     * LRU: remove the least recently used cacheNode
-     */
-    strategy?: "PRE" | "LRU";
-    /**
-     * aliveRef: KeepAliveRef
-     *
-     * aliveRef is a ref to get caches, remove cache by name, clean all cache, clean other cache except current
-     *
-     */
-    aliveRef?: RefObject<KeepAliveRef | undefined> | MutableRefObject<KeepAliveRef | undefined>;
-
     exclude?: Array<string | RegExp> | string | RegExp;
-
     include?: Array<string | RegExp> | string | RegExp;
-
-    /**
-     * suspenseElement: Suspense Wrapper Component
-     */
-    suspenseElement?: ComponentType<{
-        children: ReactNode,
-    }>;
-
-    /**
-     *  errorElement: for every cacheNode's ErrorBoundary
-     */
+    onBeforeActive?: (activeCacheKey: string) => void;
+    customContainerRef?: RefObject<HTMLDivElement>;
+    cacheNodeClassName?: string;
+    containerClassName?: string;
     errorElement?: ComponentType<{
-        children: ReactNode,
+        children: ReactNode;
     }>;
-    animationWrapper?: ComponentType<{
-        children: ReactNode
-    }>
-
     /**
-     * onBeforeActive: callback before active
-     * @param name
-     *
-     * you can do something before active like set style for dropdown
-     *
-     * example:
-     * ```tsx
-     * // if your react version is 18 or higher, you don't need to use onBeforeActive fix the style flashing issue
-     * // fix the style flashing issue when using Antd Dropdown and Select components, which occurs when the components are wrapped by Suspense and cached.
-     *
-     * // set .ant-select-dropdown .ant-picker-dropdown style to ''
-     * const dropdowns = document.querySelectorAll('.ant-select-dropdown');
-     * dropdowns.forEach(dropdown => {
-     *     if (dropdown) {
-     *         dropdown.setAttribute('style', '');
-     *     }
-     * });
-     *
-     * const pickerDropdowns = document.querySelectorAll('.ant-picker-dropdown');
-     * pickerDropdowns.forEach(pickerDropdown => {
-     *     if (pickerDropdown) {
-     *         pickerDropdown.setAttribute('style', '');
-     *     }
-     * });
-     * ```
+     * transition default false
      */
-    onBeforeActive?: (name: string) => void
+    transition?: boolean;
     /**
-     *  containerDivRef: root node to mount cacheNodes
+     * transition duration default 200
      */
-    containerDivRef?: MutableRefObject<HTMLDivElement>
-    /**
-     *  cacheDivClassName: className set for cacheNodes
-     */
-    cacheDivClassName?: string
-    /**
-     * async: whether to use async to render current cacheNode default false
-     */
-    async?: boolean
-    /**
-     * microAsync: whether to use microAsync to render current cacheNode default true
-     */
-    microAsync?: boolean
-}
-
-type KeepAliveRef = {
-    getCaches: () => Array<CacheNode>
-
-    /**
-     * remove cacheNode by name
-     * @param name cacheNode name to remove
-     * @returns
-     */
-    removeCache: (name: string) => Promise<void>
-
-    /**
-     * clean all cacheNodes
-     */
-    cleanAllCache: () => void
-
-    /**
-     * clean other cacheNodes except current active cacheNode
-     */
-    cleanOtherCache: () => void
-
-    /**
-     * refresh cacheNode by name
-     * @param name cacheNode name to refresh if name is not provided, refresh current active cacheNode
-     */
-    refresh: (name?: string) => void
+    duration?: number;
+    aliveRef?: RefObject<KeepAliveRef | undefined>;
 }
 ```
 
-#### useKeepaliveRef
+## Hooks
+
+### useEffectOnActive
 
 ```tsx
-import { useKeepaliveRef } from "keepalive-for-react"
-
-function Example() {
-
-    const aliveRef = useKeepaliveRef()
-    
-    function clean(){
-        aliveRef.current?.cleanAllCache()
-    }
-    // ...
-    
-    return <KeepAlive aliveRef={aliveRef} >
-        ...
-    </KeepAlive>
-}
-
+useEffectOnActive(() => {
+    console.log("active");
+}, []);
 ```
 
+### useLayoutEffectOnActive
 
-## Full Code Usage Example
+```tsx
+useLayoutEffectOnActive(
+    () => {
+        console.log("active");
+    },
+    [],
+    false,
+);
+// the third parameter is optional, default is true,
+// which means the callback will be skipped when the useLayoutEffect is triggered in first render
+```
 
-link to [React Keepalive Demo Repo](https://github.com/irychen/react-keepalive-demo)
+### useKeepAliveContext
 
-Preview Online Demo: [Link: https://irychen.github.io/react-keepalive-demo/](https://irychen.github.io/react-keepalive-demo/)
+type definition
 
+```ts
+interface KeepAliveContext {
+    /**
+     * whether the component is active
+     */
+    active: boolean;
+    /**
+     * refresh the component
+     * @param cacheKey - the cache key of the component,
+     * if not provided, current active cached component will be refreshed
+     */
+    refresh: (cacheKey?: string) => void;
+}
+```
 
-## Forum
+```tsx
+const { active, refresh } = useKeepAliveContext();
+// active is a boolean, true is active, false is inactive
+// refresh is a function, you can call it to refresh the component
+```
 
-- [Discord](https://discord.gg/ycf896w7eA)
+### useKeepaliveRef
 
+type definition
 
+```ts
+interface KeepAliveRef {
+    refresh: (cacheKey?: string) => void;
+    destroy: (cacheKey: string) => Promise<void>;
+}
+```
+
+```tsx
+function App() {
+    const aliveRef = useKeepaliveRef();
+    // aliveRef.current is a KeepAliveRef object
+
+    // you can call refresh and destroy on aliveRef.current
+    aliveRef.current?.refresh();
+    // it is not necessary to call destroy manually, KeepAlive will handle it automatically
+    aliveRef.current?.destroy();
+
+    return <KeepAlive aliveRef={aliveRef}>{/* ... */}</KeepAlive>;
+}
+// or
+function AppRouter() {
+    const aliveRef = useKeepaliveRef();
+    // aliveRef.current is a KeepAliveRef object
+
+    // you can call refresh and destroy on aliveRef.current
+    aliveRef.current?.refresh();
+    aliveRef.current?.destroy();
+    return <KeepAliveRouteOutlet aliveRef={aliveRef} />;
+}
+```
+
+## Development
+
+install dependencies
+
+```bash
+pnpm install
+```
+
+build package
+
+```bash
+pnpm build
+```
+
+link package to global
+
+```bash
+pnpm link --global
+```
+
+test in demo project
+
+```bash
+cd demo
+pnpm link --global keepalive-for-react
+```
