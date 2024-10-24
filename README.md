@@ -192,17 +192,37 @@ interface KeepAliveContext {
     active: boolean;
     /**
      * refresh the component
+     * @param cacheKey - the cache key of the component, if not provided, current cached component will be refreshed
+     */
+    refresh: (cacheKey?: string) => void;
+    /**
+     * refresh the component
      * @param cacheKey - the cache key of the component,
      * if not provided, current active cached component will be refreshed
      */
-    refresh: (cacheKey?: string) => void;
+    destroy: (cacheKey: string | string[]) => Promise<void>;
+    /**
+     * destroy all components
+     */
+    destroyAll: () => Promise<void>;
+    /**
+     * destroy other components
+     */
+    destroyOther: (cacheKey?: string) => Promise<void>;
+    /**
+     * get the cache nodes
+     */
+    getCacheNodes: () => Array<CacheNode>;
 }
 ```
 
 ```tsx
-const { active, refresh } = useKeepAliveContext();
+const { active, refresh, destroy, getCacheNodes } = useKeepAliveContext();
 // active is a boolean, true is active, false is inactive
 // refresh is a function, you can call it to refresh the component
+// destroy is a function, you can call it to destroy the component
+// ...
+// getCacheNodes is a function, you can call it to get the cache nodes
 ```
 
 ### useKeepaliveRef
@@ -212,7 +232,10 @@ type definition
 ```ts
 interface KeepAliveRef {
     refresh: (cacheKey?: string) => void;
-    destroy: (cacheKey: string) => Promise<void>;
+    destroy: (cacheKey: string | string[]) => Promise<void>;
+    destroyAll: () => Promise<void>;
+    destroyOther: (cacheKey?: string) => Promise<void>;
+    getCacheNodes: () => Array<CacheNode>;
 }
 ```
 

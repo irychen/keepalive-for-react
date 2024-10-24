@@ -17,18 +17,18 @@
 ## 特性
 
 - 支持 react-router-dom v6+
-- 支持 React v16+ ~ v18+
-- 支持 Suspense 和 懒加载
+- 支持 React v16+ ~ v18+  
+- 支持 Suspense 和懒加载导入
 - 支持错误边界
 - 支持自定义容器
-- 支持使用 `active` 和 `inactive` className 实现切换动画
-- 简单实现，无任何额外依赖和黑魔法
+- 支持切换动画过渡(使用 `active` 和 `inactive` 类名)
+- 实现简单,无需任何额外依赖和 hack 方式
 
 ## 注意事项
 
-- 不要使用 <React.StrictMode />，在开发模式下它无法与 keepalive-for-react 一起工作，会导致一些意外的行为。
+- 请勿使用 <React.StrictMode />,它在开发模式下将无法与 keepalive-for-react 一起工作,因为这可能导致一些意外行为。
 
-- 路由部分仅支持 react-router-dom v6+
+- 在路由中只支持 react-router-dom v6+
 
 ## 安装
 
@@ -37,14 +37,14 @@ npm install keepalive-for-react
 ```
 
 ```bash
-yarn add keepalive-for-react
+yarn add keepalive-for-react 
 ```
 
 ```bash
 pnpm add keepalive-for-react
 ```
 
-## 使用
+## 使用方法
 
 ### 在 react-router-dom v6+ 中使用
 
@@ -68,11 +68,11 @@ function Layout() {
 }
 ```
 
-详细示例请查看 [examples/react-router-dom-simple-starter](./examples/react-router-dom-simple-starter)
+详情请参考 [examples/react-router-dom-simple-starter](./examples/react-router-dom-simple-starter)
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/irychen/keepalive-for-react/tree/main/examples/react-router-dom-simple-starter)
+[![在 StackBlitz 中打开](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/irychen/keepalive-for-react/tree/main/examples/react-router-dom-simple-starter)
 
-### 在简单的标签页中使用
+### 在简单的 tabs 中使用
 
 ```bash
 npm install keepalive-for-react
@@ -82,17 +82,17 @@ npm install keepalive-for-react
 const tabs = [
     {
         key: "tab1",
-        label: "标签页 1",
+        label: "Tab 1", 
         component: Tab1,
     },
     {
         key: "tab2",
-        label: "标签页 2", 
-        component: Tab2,
+        label: "Tab 2",
+        component: Tab2, 
     },
     {
         key: "tab3",
-        label: "标签页 3",
+        label: "Tab 3",
         component: Tab3,
     },
 ];
@@ -115,11 +115,11 @@ function App() {
 }
 ```
 
-详细示例请查看 [examples/simple-tabs-starter](./examples/simple-tabs-starter)
+详情请参考 [examples/simple-tabs-starter](./examples/simple-tabs-starter)
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/irychen/keepalive-for-react/tree/main/examples/simple-tabs-starter)
+[![在 StackBlitz 中打开](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/irychen/keepalive-for-react/tree/main/examples/simple-tabs-starter)
 
-## KeepAlive 属性
+## KeepAlive Props
 
 类型定义
 
@@ -129,7 +129,7 @@ interface KeepAliveProps {
     activeCacheKey: string;
     children?: KeepAliveChildren;
     /**
-     * 最大缓存数量，默认 10
+     * 最大缓存数量,默认 10
      */
     max?: number;
     exclude?: Array<string | RegExp> | string | RegExp;
@@ -142,11 +142,11 @@ interface KeepAliveProps {
         children: ReactNode;
     }>;
     /**
-     * 切换动画，默认 false
+     * 过渡效果,默认 false
      */
     transition?: boolean;
     /**
-     * 过渡持续时间，默认 200ms
+     * 过渡持续时间,默认 200
      */
     duration?: number;
     aliveRef?: RefObject<KeepAliveRef | undefined>;
@@ -159,22 +159,22 @@ interface KeepAliveProps {
 
 ```tsx
 useEffectOnActive(() => {
-    console.log("激活");
+    console.log("active");
 }, []);
 ```
 
-### useLayoutEffectOnActive
+### useLayoutEffectOnActive 
 
 ```tsx
 useLayoutEffectOnActive(
     () => {
-        console.log("激活");
+        console.log("active");
     },
     [],
-    false, 
-); 
-// 第三个参数是可选的，默认为 true
-// 表示在首次渲染时是否跳过回调执行
+    false,
+);
+// 第三个参数可选,默认为 true
+// 表示当 useLayoutEffect 在第一次渲染时触发时,回调函数是否会被跳过
 ```
 
 ### useKeepAliveContext
@@ -184,32 +184,54 @@ useLayoutEffectOnActive(
 ```ts
 interface KeepAliveContext {
     /**
-     * 组件是否处于激活状态
+     * 判断组件是否处于激活状态
      */
     active: boolean;
     /**
      * 刷新组件
-     * @param cacheKey - 组件的缓存键,
-     * 如果未提供，将刷新当前激活缓存的组件
+     * @param cacheKey - 组件的缓存键,如果未提供,则刷新当前缓存的组件
      */
     refresh: (cacheKey?: string) => void;
+    /**
+     * 销毁组件
+     * @param cacheKey - 组件的缓存键,如果未提供,则销毁当前激活的缓存组件
+     */
+    destroy: (cacheKey: string | string[]) => Promise<void>;
+    /**
+     * 销毁所有组件
+     */
+    destroyAll: () => Promise<void>;
+    /**
+     * 销毁其他组件
+     */
+    destroyOther: (cacheKey?: string) => Promise<void>;
+    /**
+     * 获取缓存节点
+     */
+    getCacheNodes: () => Array<CacheNode>;
 }
 ```
 
 ```tsx
-const { active, refresh } = useKeepAliveContext();
+const { active, refresh, destroy, getCacheNodes } = useKeepAliveContext();
 // active 是一个布尔值,true 表示激活,false 表示未激活
-// refresh 是一个函数,可以调用它来刷新组件
+// refresh 是一个函数,你可以调用它来刷新组件
+// destroy 是一个函数,你可以调用它来销毁组件
+// ...
+// getCacheNodes 是一个函数,你可以调用它来获取缓存节点
 ```
 
-### useKeepaliveRef 
+### useKeepaliveRef
 
 类型定义
 
 ```ts
 interface KeepAliveRef {
     refresh: (cacheKey?: string) => void;
-    destroy: (cacheKey: string) => Promise<void>;
+    destroy: (cacheKey: string | string[]) => Promise<void>;
+    destroyAll: () => Promise<void>;
+    destroyOther: (cacheKey?: string) => Promise<void>;
+    getCacheNodes: () => Array<CacheNode>;
 }
 ```
 
@@ -217,24 +239,23 @@ interface KeepAliveRef {
 function App() {
     const aliveRef = useKeepaliveRef();
     // aliveRef.current 是一个 KeepAliveRef 对象
-
+    
     // 你可以在 aliveRef.current 上调用 refresh 和 destroy
     aliveRef.current?.refresh();
+    // 不需要手动调用 destroy,KeepAlive 会自动处理
     aliveRef.current?.destroy();
-
-    return <KeepAlive aliveRef={aliveRef}>{/* ... */}</KeepAlive>;
+    
+    return <KeepAlive aliveRef={aliveRef}>{/* ... */}</KeepAlive>
 }
 // 或者
 function AppRouter() {
-    const aliveRef = useKeepaliveRef(); 
+    const aliveRef = useKeepaliveRef();
     // aliveRef.current 是一个 KeepAliveRef 对象
-
-    // 你可以在 aliveRef.current 上调用 refresh 和 destroy
+    
+    // 你可以在 aliveRef.current 上调用 refresh 和 destroy  
     aliveRef.current?.refresh();
-    // 通常不需要手动调用 destroy，KeepAlive 会自动处理
     aliveRef.current?.destroy();
-
-    return <KeepAliveRouteOutlet aliveRef={aliveRef} />;
+    return <KeepAliveRouteOutlet aliveRef={aliveRef} />
 }
 ```
 
@@ -252,13 +273,13 @@ pnpm install
 pnpm build
 ```
 
-链接到全局
+全局链接包
 
 ```bash
 pnpm link --global
 ```
 
-在 demo 项目中测试
+在示例项目中测试
 
 ```bash
 cd demo

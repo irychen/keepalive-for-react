@@ -15,7 +15,7 @@ export interface CacheComponentProps {
     transition: boolean;
     duration: number;
     isCached: (cacheKey: string) => boolean;
-    destroy: (cacheKey: string) => Promise<void>;
+    destroy: (cacheKey: string | string[]) => Promise<void>;
 }
 
 const CacheComponent = memo(

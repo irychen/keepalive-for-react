@@ -10,7 +10,7 @@ import {
     useRef,
     useState,
 } from "react";
-import { isFn, isInclude, isNil } from "../../utils";
+import { isArr, isFn, isInclude, isNil } from "../../utils";
 import CacheComponentProvider from "../CacheComponentProvider";
 import CacheComponent from "../CacheComponent";
 import safeStartTransition from "../../compat/safeStartTransition";
@@ -44,7 +44,7 @@ export interface KeepAliveProps {
     aliveRef?: RefObject<KeepAliveRef | undefined>;
 }
 
-interface CacheNode {
+export interface CacheNode {
     cacheKey: string;
     ele?: KeepAliveChildren;
     lastActiveTime: number;
@@ -53,7 +53,10 @@ interface CacheNode {
 
 export interface KeepAliveRef {
     refresh: (cacheKey?: string) => void;
-    destroy: (cacheKey: string) => Promise<void>;
+    destroy: (cacheKey: string | string[]) => Promise<void>;
+    destroyAll: () => Promise<void>;
+    destroyOther: (cacheKey?: string) => Promise<void>;
+    getCacheNodes: () => Array<CacheNode>;
 }
 
 export function useKeepaliveRef() {
@@ -122,20 +125,6 @@ function KeepAlive(props: KeepAliveProps) {
         });
     }, [activeCacheKey]);
 
-    const destroy = useCallback(
-        (cacheKey: string) => {
-            return new Promise<void>(resolve => {
-                setTimeout(() => {
-                    setCacheNodes(cacheNodes => {
-                        return [...cacheNodes.filter(item => item.cacheKey !== cacheKey)];
-                    });
-                    resolve();
-                }, 0);
-            });
-        },
-        [setCacheNodes],
-    );
-
     const refresh = useCallback(
         (cacheKey?: string) => {
             setCacheNodes(cacheNodes => {
@@ -151,9 +140,55 @@ function KeepAlive(props: KeepAliveProps) {
         [setCacheNodes, activeCacheKey],
     );
 
+    const destroy = useCallback(
+        (cacheKey: string | string[]) => {
+            const cacheKeys = isArr(cacheKey) ? cacheKey : [cacheKey];
+            return new Promise<void>(resolve => {
+                setTimeout(() => {
+                    setCacheNodes(cacheNodes => {
+                        return [...cacheNodes.filter(item => !cacheKeys.includes(item.cacheKey))];
+                    });
+                    resolve();
+                }, 0);
+            });
+        },
+        [setCacheNodes],
+    );
+
+    const destroyAll = useCallback(() => {
+        return new Promise<void>(resolve => {
+            setTimeout(() => {
+                setCacheNodes([]);
+                resolve();
+            }, 0);
+        });
+    }, [setCacheNodes]);
+
+    const destroyOther = useCallback(
+        (cacheKey?: string) => {
+            const key = cacheKey || activeCacheKey;
+            return new Promise<void>(resolve => {
+                setTimeout(() => {
+                    setCacheNodes(cacheNodes => {
+                        return [...cacheNodes.filter(item => item.cacheKey === key)];
+                    });
+                    resolve();
+                }, 0);
+            });
+        },
+        [activeCacheKey, setCacheNodes],
+    );
+
+    const getCacheNodes = useCallback(() => {
+        return cacheNodes;
+    }, [cacheNodes]);
+
     useImperativeHandle(aliveRef, () => ({
         refresh,
         destroy,
+        destroyAll,
+        destroyOther,
+        getCacheNodes,
     }));
 
     return (
@@ -162,7 +197,15 @@ function KeepAlive(props: KeepAliveProps) {
             {cacheNodes.map(item => {
                 const { cacheKey, ele, renderCount } = item;
                 return (
-                    <CacheComponentProvider key={`${cacheKey}-${renderCount}`} active={activeCacheKey === cacheKey} refresh={refresh}>
+                    <CacheComponentProvider
+                        key={`${cacheKey}-${renderCount}`}
+                        active={activeCacheKey === cacheKey}
+                        refresh={refresh}
+                        destroy={destroy}
+                        destroyAll={destroyAll}
+                        destroyOther={destroyOther}
+                        getCacheNodes={getCacheNodes}
+                    >
                         <CacheComponent
                             destroy={destroy}
                             isCached={isCached}
