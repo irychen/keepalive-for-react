@@ -70,6 +70,8 @@ function Layout() {
 
 详细示例请查看 [examples/react-router-dom-simple-starter](./examples/react-router-dom-simple-starter)
 
+[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/irychen/keepalive-for-react/tree/main/examples/react-router-dom-simple-starter)
+
 ### 在简单的标签页中使用
 
 ```bash
@@ -114,6 +116,8 @@ function App() {
 ```
 
 详细示例请查看 [examples/simple-tabs-starter](./examples/simple-tabs-starter)
+
+[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/irychen/keepalive-for-react/tree/main/examples/simple-tabs-starter)
 
 ## KeepAlive 属性
 

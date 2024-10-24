@@ -27,7 +27,7 @@
 ## Attention
 
 -   DO NOT use <React.StrictMode />, it CANNOT work with keepalive-for-react in development mode. because it can lead to
-    some unexpected behavior when you use keepalive-for-react's useOnActive hook.
+    some unexpected behavior.
 
 -   In Router only support react-router-dom v6+
 
@@ -70,6 +70,8 @@ function Layout() {
 ```
 
 details see [examples/react-router-dom-simple-starter](./examples/react-router-dom-simple-starter)
+
+[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/irychen/keepalive-for-react/tree/main/examples/react-router-dom-simple-starter)
 
 ### in simple tabs
 
@@ -117,6 +119,8 @@ function App() {
 ```
 
 details see [examples/simple-tabs-starter](./examples/simple-tabs-starter)
+
+[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/irychen/keepalive-for-react/tree/main/examples/simple-tabs-starter)
 
 ## KeepAlive Props
 
