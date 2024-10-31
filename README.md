@@ -221,7 +221,7 @@ interface KeepAliveContext {
      */
     active: boolean;
     /**
-     * Refreshes the component.
+     * refresh the component
      * @param {string} [cacheKey] - The cache key of the component. If not provided, the current cached component will be refreshed.
      */
     refresh: (cacheKey?: string) => void;

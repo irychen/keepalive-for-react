@@ -220,7 +220,7 @@ interface KeepAliveContext {
      */
     active: boolean;
     /**
-     * 刷新组件。
+     * 刷新组件
      * @param {string} [cacheKey] - 组件的缓存键。如果未提供，将刷新当前缓存的组件。
      */
     refresh: (cacheKey?: string) => void;
