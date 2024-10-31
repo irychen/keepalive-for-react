@@ -69,6 +69,38 @@ function Layout() {
 }
 ```
 
+or
+
+```tsx
+import { useMemo } from "react";
+import { useLocation } from "react-router-dom";
+import { KeepAlive, useKeepAliveRef } from "keepalive-for-react";
+
+function Layout() {
+    const location = useLocation();
+    const aliveRef = useKeepAliveRef();
+
+    const outlet = useOutlet();
+
+    // determine which route component to is active
+    const currentCacheKey = useMemo(() => {
+        return location.pathname + location.search;
+    }, [location.pathname, location.search]);
+
+    return (
+        <div className="layout">
+            <MemoizedScrollTop>
+                <KeepAlive transition aliveRef={aliveRef} activeCacheKey={currentCacheKey} max={18}>
+                    <Suspense fallback={<LoadingArea />}>
+                        <SpreadArea>{outlet}</SpreadArea>
+                    </Suspense>
+                </KeepAlive>
+            </MemoizedScrollTop>
+        </div>
+    );
+}
+```
+
 details see [examples/react-router-dom-simple-starter](./examples/react-router-dom-simple-starter)
 
 [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/irychen/keepalive-for-react/tree/main/examples/react-router-dom-simple-starter)
@@ -80,7 +112,6 @@ npm install keepalive-for-react
 ```
 
 ```tsx
-
 const tabs = [
     {
         key: "tab1",
@@ -105,7 +136,6 @@ function App() {
     const tab = useMemo(() => {
         return tabs.find(tab => tab.key === currentTab);
     }, [currentTab]);
-
 
     return (
         <div>
@@ -191,22 +221,22 @@ interface KeepAliveContext {
      */
     active: boolean;
     /**
-     * refresh the component
-     * @param cacheKey - the cache key of the component, if not provided, current cached component will be refreshed
+     * Refreshes the component.
+     * @param {string} [cacheKey] - The cache key of the component. If not provided, the current cached component will be refreshed.
      */
     refresh: (cacheKey?: string) => void;
     /**
-     * refresh the component
-     * @param cacheKey - the cache key of the component,
-     * if not provided, current active cached component will be refreshed
+     * destroy the component
+     * @param {string} [cacheKey] - the cache key of the component, if not provided, current active cached component will be destroyed
      */
-    destroy: (cacheKey: string | string[]) => Promise<void>;
+    destroy: (cacheKey?: string | string[]) => Promise<void>;
     /**
      * destroy all components
      */
     destroyAll: () => Promise<void>;
     /**
-     * destroy other components
+     * destroy other components except the provided cacheKey
+     * @param {string} [cacheKey] - The cache key of the component. If not provided, destroy all components except the current active cached component.
      */
     destroyOther: (cacheKey?: string) => Promise<void>;
     /**
@@ -225,14 +255,14 @@ const { active, refresh, destroy, getCacheNodes } = useKeepAliveContext();
 // getCacheNodes is a function, you can call it to get the cache nodes
 ```
 
-### useKeepaliveRef
+### useKeepAliveRef
 
 type definition
 
 ```ts
 interface KeepAliveRef {
     refresh: (cacheKey?: string) => void;
-    destroy: (cacheKey: string | string[]) => Promise<void>;
+    destroy: (cacheKey?: string | string[]) => Promise<void>;
     destroyAll: () => Promise<void>;
     destroyOther: (cacheKey?: string) => Promise<void>;
     getCacheNodes: () => Array<CacheNode>;
@@ -241,7 +271,7 @@ interface KeepAliveRef {
 
 ```tsx
 function App() {
-    const aliveRef = useKeepaliveRef();
+    const aliveRef = useKeepAliveRef();
     // aliveRef.current is a KeepAliveRef object
 
     // you can call refresh and destroy on aliveRef.current
@@ -253,7 +283,7 @@ function App() {
 }
 // or
 function AppRouter() {
-    const aliveRef = useKeepaliveRef();
+    const aliveRef = useKeepAliveRef();
     // aliveRef.current is a KeepAliveRef object
 
     // you can call refresh and destroy on aliveRef.current

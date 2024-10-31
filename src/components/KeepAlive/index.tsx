@@ -51,15 +51,35 @@ export interface CacheNode {
     renderCount: number;
 }
 
-export interface KeepAliveRef {
+export interface KeepAliveAPI {
+    /**
+     * Refreshes the component.
+     * @param {string} [cacheKey] - The cache key of the component. If not provided, the current cached component will be refreshed.
+     */
     refresh: (cacheKey?: string) => void;
-    destroy: (cacheKey: string | string[]) => Promise<void>;
+    /**
+     * destroy the component
+     * @param {string} [cacheKey] - the cache key of the component, if not provided, current active cached component will be destroyed
+     */
+    destroy: (cacheKey?: string | string[]) => Promise<void>;
+    /**
+     * destroy all components
+     */
     destroyAll: () => Promise<void>;
+    /**
+     * destroy other components except the provided cacheKey
+     * @param {string} [cacheKey] - The cache key of the component. If not provided, destroy all components except the current active cached component.
+     */
     destroyOther: (cacheKey?: string) => Promise<void>;
+    /**
+     * get the cache nodes
+     */
     getCacheNodes: () => Array<CacheNode>;
 }
 
-export function useKeepaliveRef() {
+export interface KeepAliveRef extends KeepAliveAPI {}
+
+export function useKeepAliveRef() {
     return useRef<KeepAliveRef>();
 }
 
@@ -141,8 +161,9 @@ function KeepAlive(props: KeepAliveProps) {
     );
 
     const destroy = useCallback(
-        (cacheKey: string | string[]) => {
-            const cacheKeys = isArr(cacheKey) ? cacheKey : [cacheKey];
+        (cacheKey?: string | string[]) => {
+            const targetCacheKey = cacheKey || activeCacheKey;
+            const cacheKeys = isArr(targetCacheKey) ? targetCacheKey : [targetCacheKey];
             return new Promise<void>(resolve => {
                 setTimeout(() => {
                     setCacheNodes(cacheNodes => {
@@ -152,7 +173,7 @@ function KeepAlive(props: KeepAliveProps) {
                 }, 0);
             });
         },
-        [setCacheNodes],
+        [setCacheNodes, activeCacheKey],
     );
 
     const destroyAll = useCallback(() => {
@@ -166,11 +187,11 @@ function KeepAlive(props: KeepAliveProps) {
 
     const destroyOther = useCallback(
         (cacheKey?: string) => {
-            const key = cacheKey || activeCacheKey;
+            const targetCacheKey = cacheKey || activeCacheKey;
             return new Promise<void>(resolve => {
                 setTimeout(() => {
                     setCacheNodes(cacheNodes => {
-                        return [...cacheNodes.filter(item => item.cacheKey === key)];
+                        return [...cacheNodes.filter(item => item.cacheKey === targetCacheKey)];
                     });
                     resolve();
                 }, 0);

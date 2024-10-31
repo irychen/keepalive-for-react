@@ -1,11 +1,11 @@
-import { KeepAliveRouteOutlet, useKeepaliveRef } from "keepalive-for-react";
+import { KeepAliveRouteOutlet, useKeepAliveRef } from "keepalive-for-react";
 import { ReactNode, Suspense, useEffect, useMemo, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 
 function Layout() {
     const location = useLocation();
     const activePath = location.pathname + location.search;
-    const aliveRef = useKeepaliveRef();
+    const aliveRef = useKeepAliveRef();
     return (
         <div className="text-neutral-700 overflow-hidden max-w-[600px] mx-auto my-[20px] border border-neutral-200 rounded-md">
             <div className="flex md:text-[16px] text-[12px] gap-4 h-[40px] justify-around items-center  px-4 bg-gray-100">
