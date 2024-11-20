@@ -45,3 +45,7 @@ export function isInclude(include: Array<string | RegExp> | string | RegExp | un
         }
     });
 }
+
+export function macroTask(fn: () => void) {
+    setTimeout(fn, 0);
+}

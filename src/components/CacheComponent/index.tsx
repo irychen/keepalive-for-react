@@ -1,4 +1,4 @@
-import { ComponentType, Fragment, memo, ReactNode, RefObject, useMemo, useRef } from "react";
+import { ComponentType, Fragment, memo, ReactNode, RefObject, useEffect, useMemo, useRef } from "react";
 import { createPortal } from "react-dom";
 import { delayAsync, domAttrSet } from "../../utils";
 
@@ -39,14 +39,33 @@ const CacheComponent = memo(
             return cacheDiv;
         }, [renderCount, cacheNodeClassName]);
 
-        const containerDiv = containerDivRef.current;
-
-        if (transition) {
-            (async () => {
-                if (active && containerDiv) {
+        useEffect(() => {
+            const containerDiv = containerDivRef.current;
+            if (!containerDiv) {
+                console.warn(`keepalive: cache container not found`);
+                return;
+            }
+            if (transition) {
+                (async () => {
+                    if (active) {
+                        const activeNodes = prepareCacheContainer(containerDiv);
+                        // duration - 40ms is to avoid the animation effect ending too early
+                        await delayAsync(duration - 40);
+                        removeDivNodes(activeNodes);
+                        if (containerDiv.contains(cacheDiv)) {
+                            return;
+                        }
+                        renderCacheDiv(containerDiv, cacheDiv);
+                    } else {
+                        if (!cached) {
+                            await delayAsync(duration);
+                            destroy(cacheKey);
+                        }
+                    }
+                })();
+            } else {
+                if (active) {
                     const activeNodes = prepareCacheContainer(containerDiv);
-                    // duration - 40ms is to avoid the animation effect ending too early
-                    await delayAsync(duration - 40);
                     removeDivNodes(activeNodes);
                     if (containerDiv.contains(cacheDiv)) {
                         return;
@@ -54,25 +73,11 @@ const CacheComponent = memo(
                     renderCacheDiv(containerDiv, cacheDiv);
                 } else {
                     if (!cached) {
-                        await delayAsync(duration);
                         destroy(cacheKey);
                     }
                 }
-            })();
-        } else {
-            if (active && containerDiv) {
-                const activeNodes = prepareCacheContainer(containerDiv);
-                removeDivNodes(activeNodes);
-                if (containerDiv.contains(cacheDiv)) {
-                    return;
-                }
-                renderCacheDiv(containerDiv, cacheDiv);
-            } else {
-                if (!cached) {
-                    destroy(cacheKey);
-                }
             }
-        }
+        }, [active, containerDivRef]);
 
         function prepareCacheContainer(containerDiv: HTMLDivElement) {
             const nodes = Array.from(containerDiv.children);

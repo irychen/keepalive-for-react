@@ -10,7 +10,7 @@ import {
     useRef,
     useState,
 } from "react";
-import { isArr, isFn, isInclude, isNil } from "../../utils";
+import { isArr, isFn, isInclude, isNil, macroTask } from "../../utils";
 import CacheComponentProvider from "../CacheComponentProvider";
 import CacheComponent from "../CacheComponent";
 import safeStartTransition from "../../compat/safeStartTransition";
@@ -165,12 +165,12 @@ function KeepAlive(props: KeepAliveProps) {
             const targetCacheKey = cacheKey || activeCacheKey;
             const cacheKeys = isArr(targetCacheKey) ? targetCacheKey : [targetCacheKey];
             return new Promise<void>(resolve => {
-                setTimeout(() => {
+                macroTask(() => {
                     setCacheNodes(cacheNodes => {
                         return [...cacheNodes.filter(item => !cacheKeys.includes(item.cacheKey))];
                     });
                     resolve();
-                }, 0);
+                });
             });
         },
         [setCacheNodes, activeCacheKey],
@@ -178,10 +178,10 @@ function KeepAlive(props: KeepAliveProps) {
 
     const destroyAll = useCallback(() => {
         return new Promise<void>(resolve => {
-            setTimeout(() => {
+            macroTask(() => {
                 setCacheNodes([]);
                 resolve();
-            }, 0);
+            });
         });
     }, [setCacheNodes]);
 
@@ -189,12 +189,12 @@ function KeepAlive(props: KeepAliveProps) {
         (cacheKey?: string) => {
             const targetCacheKey = cacheKey || activeCacheKey;
             return new Promise<void>(resolve => {
-                setTimeout(() => {
+                macroTask(() => {
                     setCacheNodes(cacheNodes => {
                         return [...cacheNodes.filter(item => item.cacheKey === targetCacheKey)];
                     });
                     resolve();
-                }, 0);
+                });
             });
         },
         [activeCacheKey, setCacheNodes],
