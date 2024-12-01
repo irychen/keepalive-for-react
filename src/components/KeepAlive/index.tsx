@@ -10,7 +10,7 @@ import {
     useRef,
     useState,
 } from "react";
-import { isArr, isFn, isInclude, isNil, macroTask } from "../../utils";
+import { isArr, isFn, isInclude, isNil, isRegExp, macroTask } from "../../utils";
 import CacheComponentProvider from "../CacheComponentProvider";
 import CacheComponent from "../CacheComponent";
 import safeStartTransition from "../../compat/safeStartTransition";
@@ -42,6 +42,16 @@ export interface KeepAliveProps {
      */
     duration?: number;
     aliveRef?: RefObject<KeepAliveRef | undefined>;
+    /**
+     * max alive time for cache node (second)
+     * @default 0 (no limit)
+     */
+    maxAliveTime?: number | MaxAliveConfig[];
+}
+
+interface MaxAliveConfig {
+    match: string | RegExp;
+    expire: number;
 }
 
 export interface CacheNode {
@@ -98,6 +108,7 @@ function KeepAlive(props: KeepAliveProps) {
         duration = 200,
         children,
         aliveRef,
+        maxAliveTime = 0,
     } = props;
 
     const containerDivRef = customContainerRef || useRef<HTMLDivElement>(null);
@@ -126,8 +137,27 @@ function KeepAlive(props: KeepAliveProps) {
                 if (cacheNode) {
                     return prevCacheNodes.map(item => {
                         if (item.cacheKey === activeCacheKey) {
+                            let needUpdate = false;
                             if (isFn(onBeforeActive)) onBeforeActive(activeCacheKey);
-                            return { ...item, ele: children, lastActiveTime };
+                            if (maxAliveTime) {
+                                const prev = item.lastActiveTime;
+                                if (isArr(maxAliveTime)) {
+                                    const config = maxAliveTime.find(item => {
+                                        return isRegExp(item.match) ? item.match.test(activeCacheKey) : item.match === activeCacheKey;
+                                    });
+                                    if (config) {
+                                        needUpdate = config && prev + config.expire * 1000 < lastActiveTime;
+                                    }
+                                } else {
+                                    needUpdate = prev + maxAliveTime * 1000 < lastActiveTime;
+                                }
+                            }
+                            return {
+                                ...item,
+                                ele: children,
+                                lastActiveTime,
+                                renderCount: needUpdate ? item.renderCount + 1 : item.renderCount,
+                            };
                         }
                         return item;
                     });

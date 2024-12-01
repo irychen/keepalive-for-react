@@ -1,6 +1,9 @@
-import {createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter } from "react-router-dom";
 import Layout from "../layout";
 import { lazy } from "react";
+import Nested from "../pages/nested";
+import NestedA from "../pages/nested/nested-a";
+import NestedB from "../pages/nested/nested-b";
 // import Home from "../pages/home";
 // import About from "../pages/about";
 // import Counter from "../pages/counter";
@@ -32,6 +35,20 @@ const router = createBrowserRouter([
             {
                 path: "/nocache-counter",
                 element: <NoCacheCounter />,
+            },
+            {
+                path: "/nested",
+                element: <Nested />,
+                children: [
+                    {
+                        path: "nested-a",
+                        element: <NestedA />,
+                    },
+                    {
+                        path: "nested-b",
+                        element: <NestedB />,
+                    },
+                ],
             },
         ],
     },

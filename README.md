@@ -183,6 +183,16 @@ interface KeepAliveProps {
      */
     duration?: number;
     aliveRef?: RefObject<KeepAliveRef | undefined>;
+    /**
+     * max alive time for cache node (second)
+     * @default 0 (no limit)
+     */
+    maxAliveTime?: number | MaxAliveConfig[];
+}
+
+interface MaxAliveConfig {
+    match: string | RegExp;
+    expire: number;
 }
 ```
 

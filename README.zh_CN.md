@@ -182,6 +182,16 @@ interface KeepAliveProps {
      */
     duration?: number;
     aliveRef?: RefObject<KeepAliveRef | undefined>;
+    /**
+     * 缓存节点最大存活时间 (秒)
+     * @default 0 (无限制)
+     */
+    maxAliveTime?: number | MaxAliveConfig[];
+}
+
+interface MaxAliveConfig {
+    match: string | RegExp;
+    expire: number;
 }
 ```
 

@@ -21,6 +21,12 @@ function Layout() {
                 <Link to="/nocache-counter" className={activePath === "/nocache-counter" ? "text-blue-500" : ""}>
                     Counter2
                 </Link>
+                <Link to="/nested/nested-a" className={activePath === "/nested/nested-a" ? "text-blue-500" : ""}>
+                    NestedA
+                </Link>
+                <Link to="/nested/nested-b" className={activePath === "/nested/nested-b" ? "text-blue-500" : ""}>
+                    NestedB
+                </Link>
             </div>
             <div>
                 <CustomSuspense>
@@ -38,7 +44,7 @@ function Layout() {
 }
 
 // remember the scroll position of the page when switching routes
-function MemoScrollTopWrapper(props: { children: ReactNode }) {
+function MemoScrollTopWrapper(props: { children?: ReactNode }) {
     const { children } = props;
     const domRef = useRef<HTMLDivElement>(null);
     const location = useLocation();

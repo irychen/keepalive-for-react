@@ -18,6 +18,34 @@ export interface CacheComponentProps {
     destroy: (cacheKey: string | string[]) => Promise<void>;
 }
 
+function getChildNodes(dom?: HTMLDivElement) {
+    return dom ? Array.from(dom.children) : [];
+}
+
+function removeDivNodes(nodes: Element[]) {
+    nodes.forEach(node => {
+        node.remove();
+    });
+}
+
+function renderCacheDiv(containerDiv: HTMLDivElement, cacheDiv: HTMLDivElement) {
+    const removeNodes = getChildNodes(containerDiv);
+    removeDivNodes(removeNodes);
+    containerDiv.appendChild(cacheDiv);
+    cacheDiv.classList.remove("inactive");
+    cacheDiv.classList.add("active");
+}
+
+function switchActiveNodesToInactive(containerDiv: HTMLDivElement, cacheKey: string) {
+    const nodes = getChildNodes(containerDiv);
+    const activeNodes = nodes.filter(node => node.classList.contains("active") && node.getAttribute("data-cache-key") !== cacheKey);
+    activeNodes.forEach(node => {
+        node.classList.remove("active");
+        node.classList.add("inactive");
+    });
+    return activeNodes;
+}
+
 const CacheComponent = memo(
     function (props: CacheComponentProps): any {
         const { errorElement: ErrorBoundary = Fragment, cacheNodeClassName, children, cacheKey, isCached } = props;
@@ -48,10 +76,10 @@ const CacheComponent = memo(
             if (transition) {
                 (async () => {
                     if (active) {
-                        const activeNodes = prepareCacheContainer(containerDiv);
+                        const inactiveNodes = switchActiveNodesToInactive(containerDiv, cacheKey);
                         // duration - 40ms is to avoid the animation effect ending too early
                         await delayAsync(duration - 40);
-                        removeDivNodes(activeNodes);
+                        removeDivNodes(inactiveNodes);
                         if (containerDiv.contains(cacheDiv)) {
                             return;
                         }
@@ -65,8 +93,8 @@ const CacheComponent = memo(
                 })();
             } else {
                 if (active) {
-                    const activeNodes = prepareCacheContainer(containerDiv);
-                    removeDivNodes(activeNodes);
+                    const inactiveNodes = switchActiveNodesToInactive(containerDiv, cacheKey);
+                    removeDivNodes(inactiveNodes);
                     if (containerDiv.contains(cacheDiv)) {
                         return;
                     }
@@ -77,32 +105,7 @@ const CacheComponent = memo(
                     }
                 }
             }
-        }, [active, containerDivRef]);
-
-        function prepareCacheContainer(containerDiv: HTMLDivElement) {
-            const nodes = Array.from(containerDiv.children);
-            // change activeCacheDiv class active to inactive
-            const activeNodes = nodes.filter(node => node.classList.contains("active") && node.getAttribute("data-cache-key") !== cacheKey);
-            activeNodes.forEach(node => {
-                node.classList.remove("active");
-                node.classList.add("inactive");
-            });
-            return activeNodes;
-        }
-
-        function renderCacheDiv(containerDiv: HTMLDivElement, cacheDiv: HTMLDivElement) {
-            const removeNodes = Array.from(containerDiv.children);
-            removeDivNodes(removeNodes);
-            containerDiv.appendChild(cacheDiv);
-            cacheDiv.classList.remove("inactive");
-            cacheDiv.classList.add("active");
-        }
-
-        function removeDivNodes(nodes: Element[]) {
-            nodes.forEach(node => {
-                node.remove();
-            });
-        }
+        }, [active, containerDivRef, cacheKey]);
 
         return activatedRef.current ? createPortal(<ErrorBoundary>{children}</ErrorBoundary>, cacheDiv, cacheKey) : null;
     },
