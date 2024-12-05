@@ -6,7 +6,7 @@ import babel from "@rollup/plugin-babel"
 
 const commonConfig = {
     input: "src/index.ts",
-    external: ["react", "react-dom", "react-router-dom"],
+    external: ["react", "react-dom", "react-router-dom", "react/jsx-runtime"],
     plugins: [
         nodeResolve(),
         babel({

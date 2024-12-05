@@ -14,7 +14,3 @@ node_modules
 dist
 
 
-# npm lockfile
-package-lock.json
-yarn.lock
-pnpm-lock.yaml
