@@ -23,6 +23,7 @@
 -   Support Custom Container
 -   Support Switching Animation Transition with className `active` and `inactive`
 -   Simply implement, without any extra dependencies and hacking ways
+-   Only 6kb minified
 
 ## Attention
 
