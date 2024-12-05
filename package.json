@@ -1,11 +1,27 @@
 {
     "name": "keepalive-for-react",
-    "version": "3.0.5",
+    "version": "3.0.6",
     "description": "A react <KeepAlive/> component like <keep-alive/> in vue",
     "homepage": "https://github.com/irychen/keepalive-for-react",
-    "module": "dist/esm/index.mjs",
-    "types": "dist/types/index.d.ts",
-    "main": "dist/cjs/index.cjs",
+    "exports": {
+        ".": {
+            "development": {
+                "import": "./dist/esm/index.mjs",
+                "require": "./dist/cjs/index.cjs"
+            },
+            "production": {
+                "import": "./dist/esm/index-min.mjs",
+                "require": "./dist/cjs/index-min.cjs"
+            },
+            "default": {
+                "import": "./dist/esm/index-min.mjs",
+                "require": "./dist/cjs/index-min.cjs"
+            }
+        }
+    },
+    "module": "./dist/esm/index.mjs",
+    "main": "./dist/cjs/index.cjs",
+    "types": "./dist/types/index.d.ts",
     "repository": {
         "type": "git",
         "url": "git+https://github.com/irychen/keepalive-for-react.git"
@@ -13,7 +29,9 @@
     "files": [
         "dist/types/**/*.d.ts",
         "dist/esm/index.mjs",
-        "dist/cjs/index.cjs"
+        "dist/esm/index-min.mjs",
+        "dist/cjs/index.cjs",
+        "dist/cjs/index-min.cjs"
     ],
     "lint-staged": {
         "src/**/*.{js,ts,tsx}": [

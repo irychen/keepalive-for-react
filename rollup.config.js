@@ -15,7 +15,6 @@ const commonConfig = {
         }),
         typescript(),
         commonjs(),
-        terser(),
     ],
 }
 
@@ -31,10 +30,28 @@ const config = [
     {
         ...commonConfig,
         output: {
+            file: "dist/esm/index-min.mjs",
+            exports: "named",
+            format: "esm",
+        },
+        plugins: [...commonConfig.plugins, terser()],
+    },
+    {
+        ...commonConfig,
+        output: {
             file: "dist/cjs/index.cjs",
             exports: "named",
             format: "cjs",
         },
+    },
+    {
+        ...commonConfig,
+        output: {
+            file: "dist/cjs/index-min.cjs",
+            exports: "named",
+            format: "cjs",
+        },
+        plugins: [...commonConfig.plugins, terser()],
     },
 ]
 export default config
