@@ -5,6 +5,7 @@
     "homepage": "https://github.com/irychen/keepalive-for-react",
     "exports": {
         ".": {
+            "types": "./dist/types/index.d.ts",
             "development": {
                 "import": "./dist/esm/index.mjs",
                 "require": "./dist/cjs/index.cjs"
