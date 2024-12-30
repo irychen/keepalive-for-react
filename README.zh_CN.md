@@ -178,6 +178,13 @@ interface KeepAliveProps {
      * 过渡效果 默认false
      */
     transition?: boolean;
+
+    /**
+     * 使用view transition来过渡组件 默认false
+     * @see https://developer.chrome.com/docs/web-platform/view-transitions/
+     */
+    viewTransition?: boolean;
+    
     /**
      * 过渡时间 默认200ms
      */

@@ -13,6 +13,7 @@ export interface CacheComponentProps {
     active: boolean;
     cacheKey: string;
     transition: boolean;
+    viewTransition: boolean;
     duration: number;
     isCached: (cacheKey: string) => boolean;
     destroy: (cacheKey: string | string[]) => Promise<void>;
@@ -49,7 +50,7 @@ function switchActiveNodesToInactive(containerDiv: HTMLDivElement, cacheKey: str
 const CacheComponent = memo(
     function (props: CacheComponentProps): any {
         const { errorElement: ErrorBoundary = Fragment, cacheNodeClassName, children, cacheKey, isCached } = props;
-        const { active, renderCount, destroy, transition, duration, containerDivRef } = props;
+        const { active, renderCount, destroy, transition, viewTransition, duration, containerDivRef } = props;
         const activatedRef = useRef(false);
 
         const cached = isCached(cacheKey);
@@ -93,12 +94,19 @@ const CacheComponent = memo(
                 })();
             } else {
                 if (active) {
-                    const inactiveNodes = switchActiveNodesToInactive(containerDiv, cacheKey);
-                    removeDivNodes(inactiveNodes);
-                    if (containerDiv.contains(cacheDiv)) {
-                        return;
+                    const makeChange = () => {
+                        const inactiveNodes = switchActiveNodesToInactive(containerDiv, cacheKey);
+                        removeDivNodes(inactiveNodes);
+                        if (containerDiv.contains(cacheDiv)) {
+                            return;
+                        }
+                        renderCacheDiv(containerDiv, cacheDiv);
+                    };
+                    if (viewTransition && (document as any).startViewTransition) {
+                        (document as any).startViewTransition(makeChange);
+                    } else {
+                        makeChange();
                     }
-                    renderCacheDiv(containerDiv, cacheDiv);
                 } else {
                     if (!cached) {
                         destroy(cacheKey);
