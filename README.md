@@ -222,8 +222,8 @@ useLayoutEffectOnActive(
     [],
     false,
 );
-// the third parameter is optional, default is true,
-// which means the callback will be skipped when the useLayoutEffect is triggered in first render
+// the third parameter is optional, default is false,
+// if true, which means the callback will be skipped when the useLayoutEffect is triggered in first render
 ```
 
 ### useKeepAliveContext

@@ -223,8 +223,8 @@ useLayoutEffectOnActive(
     [],
     false,
 );
-// 第三个参数是可选的,默认为true,
-// 表示在首次渲染时触发useLayoutEffect时会跳过回调
+// 第三个参数是可选的,默认为false,
+// 如果为true,表示在首次渲染时触发useLayoutEffect时会跳过回调
 ```
 
 ### useKeepAliveContext
