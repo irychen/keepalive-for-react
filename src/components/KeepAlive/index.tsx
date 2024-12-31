@@ -37,6 +37,15 @@ export interface KeepAliveProps {
      * transition default false
      */
     transition?: boolean;
+
+    /**
+     * view transition default false
+     *
+     * use viewTransition to animate the component when switching tabs
+     *
+     * @see https://developer.chrome.com/docs/web-platform/view-transitions/
+     */
+    viewTransition?: boolean;
     /**
      * transition duration default 200
      */
@@ -105,6 +114,7 @@ function KeepAlive(props: KeepAliveProps) {
         containerClassName = "keep-alive-render",
         errorElement,
         transition = false,
+        viewTransition = false,
         duration = 200,
         children,
         aliveRef,
@@ -261,6 +271,7 @@ function KeepAlive(props: KeepAliveProps) {
                             destroy={destroy}
                             isCached={isCached}
                             transition={transition}
+                            viewTransition={viewTransition}
                             duration={duration}
                             renderCount={renderCount}
                             containerDivRef={containerDivRef}

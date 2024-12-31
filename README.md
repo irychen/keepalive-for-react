@@ -180,6 +180,11 @@ interface KeepAliveProps {
      */
     transition?: boolean;
     /**
+     * use view transition to animate the component when switching tabs
+     * @see https://developer.chrome.com/docs/web-platform/view-transitions/
+     */
+    viewTransition?: boolean;
+    /**
      * transition duration default 200
      */
     duration?: number;
