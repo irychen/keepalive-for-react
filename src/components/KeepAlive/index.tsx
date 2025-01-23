@@ -10,7 +10,7 @@ import {
     useRef,
     useState,
 } from "react";
-import { isArr, isFn, isInclude, isNil, isRegExp, macroTask } from "../../utils";
+import { isArr, isFn, isNil, isRegExp, macroTask } from "../../utils";
 import CacheComponentProvider from "../CacheComponentProvider";
 import CacheComponent from "../CacheComponent";
 import safeStartTransition from "../../compat/safeStartTransition";
@@ -123,20 +123,6 @@ function KeepAlive(props: KeepAliveProps) {
 
     const containerDivRef = customContainerRef || useRef<HTMLDivElement>(null);
     const [cacheNodes, setCacheNodes] = useState<Array<CacheNode>>([]);
-
-    const isCached = useCallback(
-        (cacheKey: string) => {
-            if (include) {
-                return isInclude(include, cacheKey);
-            } else {
-                if (exclude) {
-                    return !isInclude(exclude, cacheKey);
-                }
-                return true;
-            }
-        },
-        [exclude, include],
-    );
 
     useLayoutEffect(() => {
         if (isNil(activeCacheKey)) return;
@@ -269,7 +255,8 @@ function KeepAlive(props: KeepAliveProps) {
                     >
                         <CacheComponent
                             destroy={destroy}
-                            isCached={isCached}
+                            include={include}
+                            exclude={exclude}
                             transition={transition}
                             viewTransition={viewTransition}
                             duration={duration}
