@@ -135,7 +135,7 @@ const CacheComponent = memo(
         return (
             prevProps.active === nextProps.active &&
             prevProps.renderCount === nextProps.renderCount &&
-            prevProps.children === nextProps.children
+            prevProps.children === nextProps.children &&
             prevProps.exclude === nextProps.exclude &&
             prevProps.include === nextProps.include
         );
