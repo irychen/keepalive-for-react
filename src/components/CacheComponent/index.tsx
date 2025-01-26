@@ -110,7 +110,11 @@ const CacheComponent = memo(
         return activatedRef.current ? createPortal(<ErrorBoundary>{children}</ErrorBoundary>, cacheDiv, cacheKey) : null;
     },
     (prevProps, nextProps) => {
-        return prevProps.active === nextProps.active && prevProps.renderCount === nextProps.renderCount;
+        return (
+            prevProps.active === nextProps.active &&
+            prevProps.renderCount === nextProps.renderCount &&
+            prevProps.children === nextProps.children
+        );
     },
 );
 

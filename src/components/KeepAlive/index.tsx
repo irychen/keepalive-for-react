@@ -173,7 +173,7 @@ function KeepAlive(props: KeepAliveProps) {
                 }
             });
         });
-    }, [activeCacheKey]);
+    }, [activeCacheKey, children]);
 
     const refresh = useCallback(
         (cacheKey?: string) => {
