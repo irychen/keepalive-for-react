@@ -178,6 +178,13 @@ interface KeepAliveProps {
      * 过渡效果 默认false
      */
     transition?: boolean;
+
+    /**
+     * 使用view transition来过渡组件 默认false
+     * @see https://developer.chrome.com/docs/web-platform/view-transitions/
+     */
+    viewTransition?: boolean;
+    
     /**
      * 过渡时间 默认200ms
      */
@@ -216,8 +223,8 @@ useLayoutEffectOnActive(
     [],
     false,
 );
-// 第三个参数是可选的,默认为true,
-// 表示在首次渲染时触发useLayoutEffect时会跳过回调
+// 第三个参数是可选的,默认为false,
+// 如果为true,表示在首次渲染时触发useLayoutEffect时会跳过回调
 ```
 
 ### useKeepAliveContext

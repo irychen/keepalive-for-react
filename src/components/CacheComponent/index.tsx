@@ -1,6 +1,6 @@
 import { ComponentType, Fragment, memo, ReactNode, RefObject, useEffect, useMemo, useRef } from "react";
 import { createPortal } from "react-dom";
-import { delayAsync, domAttrSet } from "../../utils";
+import { delayAsync, domAttrSet, isInclude } from "../../utils";
 
 export interface CacheComponentProps {
     children: ReactNode;
@@ -13,8 +13,10 @@ export interface CacheComponentProps {
     active: boolean;
     cacheKey: string;
     transition: boolean;
+    viewTransition: boolean;
     duration: number;
-    isCached: (cacheKey: string) => boolean;
+    exclude?: Array<string | RegExp> | string | RegExp;
+    include?: Array<string | RegExp> | string | RegExp;
     destroy: (cacheKey: string | string[]) => Promise<void>;
 }
 
@@ -46,13 +48,26 @@ function switchActiveNodesToInactive(containerDiv: HTMLDivElement, cacheKey: str
     return activeNodes;
 }
 
+function isCached(
+    cacheKey: string,
+    exclude?: Array<string | RegExp> | string | RegExp,
+    include?: Array<string | RegExp> | string | RegExp,
+) {
+    if (include) {
+        return isInclude(include, cacheKey);
+    } else {
+        if (exclude) {
+            return !isInclude(exclude, cacheKey);
+        }
+        return true;
+    }
+}
+
 const CacheComponent = memo(
     function (props: CacheComponentProps): any {
-        const { errorElement: ErrorBoundary = Fragment, cacheNodeClassName, children, cacheKey, isCached } = props;
-        const { active, renderCount, destroy, transition, duration, containerDivRef } = props;
+        const { errorElement: ErrorBoundary = Fragment, cacheNodeClassName, children, cacheKey, exclude, include } = props;
+        const { active, renderCount, destroy, transition, viewTransition, duration, containerDivRef } = props;
         const activatedRef = useRef(false);
-
-        const cached = isCached(cacheKey);
 
         activatedRef.current = activatedRef.current || active;
 
@@ -60,7 +75,6 @@ const CacheComponent = memo(
             const cacheDiv = document.createElement("div");
             domAttrSet(cacheDiv)
                 .set("data-cache-key", cacheKey)
-                .set("data-cached", cached.valueOf().toString())
                 .set("style", "height: 100%")
                 .set("data-render-count", renderCount.toString());
             cacheDiv.className = cacheNodeClassName;
@@ -68,6 +82,7 @@ const CacheComponent = memo(
         }, [renderCount, cacheNodeClassName]);
 
         useEffect(() => {
+            const cached = isCached(cacheKey, exclude, include);
             const containerDiv = containerDivRef.current;
             if (!containerDiv) {
                 console.warn(`keepalive: cache container not found`);
@@ -93,19 +108,26 @@ const CacheComponent = memo(
                 })();
             } else {
                 if (active) {
-                    const inactiveNodes = switchActiveNodesToInactive(containerDiv, cacheKey);
-                    removeDivNodes(inactiveNodes);
-                    if (containerDiv.contains(cacheDiv)) {
-                        return;
+                    const makeChange = () => {
+                        const inactiveNodes = switchActiveNodesToInactive(containerDiv, cacheKey);
+                        removeDivNodes(inactiveNodes);
+                        if (containerDiv.contains(cacheDiv)) {
+                            return;
+                        }
+                        renderCacheDiv(containerDiv, cacheDiv);
+                    };
+                    if (viewTransition && (document as any).startViewTransition) {
+                        (document as any).startViewTransition(makeChange);
+                    } else {
+                        makeChange();
                     }
-                    renderCacheDiv(containerDiv, cacheDiv);
                 } else {
                     if (!cached) {
                         destroy(cacheKey);
                     }
                 }
             }
-        }, [active, containerDivRef, cacheKey]);
+        }, [active, containerDivRef, cacheKey, exclude, include]);
 
         return activatedRef.current ? createPortal(<ErrorBoundary>{children}</ErrorBoundary>, cacheDiv, cacheKey) : null;
     },
@@ -114,6 +136,8 @@ const CacheComponent = memo(
             prevProps.active === nextProps.active &&
             prevProps.renderCount === nextProps.renderCount &&
             prevProps.children === nextProps.children
+            prevProps.exclude === nextProps.exclude &&
+            prevProps.include === nextProps.include
         );
     },
 );
