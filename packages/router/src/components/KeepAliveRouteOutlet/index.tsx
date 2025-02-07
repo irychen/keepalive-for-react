@@ -1,5 +1,5 @@
 import { ComponentType, Fragment, ReactNode, useMemo } from "react";
-import { useLocation, useOutlet } from "react-router-dom";
+import { useLocation, useOutlet } from "react-router";
 import KeepAlive, { KeepAliveProps } from "keepalive-for-react";
 
 export interface KeepAliveRouteOutletProps extends Omit<KeepAliveProps, "activeCacheKey"> {

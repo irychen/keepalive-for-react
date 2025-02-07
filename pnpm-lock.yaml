@@ -88,9 +88,9 @@ importers:
             react-dom:
                 specifier: ">=16.8.0"
                 version: 18.0.0(react@18.0.0)
-            react-router-dom:
-                specifier: ">=6.0.0"
-                version: 6.0.0(react-dom@18.0.0(react@18.0.0))(react@18.0.0)
+            react-router:
+                specifier: ">=7.0.0"
+                version: 7.1.5(react-dom@18.0.0(react@18.0.0))(react@18.0.0)
 
 packages:
     "@ampproject/remapping@2.3.0":
@@ -843,6 +843,9 @@ packages:
         cpu: [x64]
         os: [win32]
 
+    "@types/cookie@0.6.0":
+        resolution: { integrity: sha512-4Kh9a6B2bQciAhf7FSuMRRkUWecJgJu9nPnx3yzpsfXX/c50REIqpHY4C82bXP90qrLtXtkDxTZosYO3UpOwlA== }
+
     "@types/estree@1.0.6":
         resolution: { integrity: sha512-AYnb1nQyY49te+VRAVgmzfcgjYS91mY5P0TKUDCLEM+gNnA+3T6rWITXRLYCpahpqSQbN5cE+gHpnPyXjHWxcw== }
 
@@ -943,6 +946,10 @@ packages:
     convert-source-map@2.0.0:
         resolution: { integrity: sha512-Kvp459HrV2FEJ1CAsi1Ku+MY3kasH19TFykTz2xWmMeq6bk2NU3XXvfJ+Q61m0xktWwt+1HSYf3JZsTms3aRJg== }
 
+    cookie@1.0.2:
+        resolution: { integrity: sha512-9Kr/j4O16ISv8zBBhJoi4bXOYNTkFLOqSL3UDB0njXxCXNezjeyVrJyGOWtgfs/q2km1gwBcfH8q1yEGoMYunA== }
+        engines: { node: ">=18" }
+
     core-js-compat@3.40.0:
         resolution: { integrity: sha512-0XEDpr5y5mijvw8Lbc6E5AkjrHfp7eEoPlu36SWeAbcL8fn1G1ANe8DBlo2XoNN89oVpxWwOjYIPVzR4ZvsKCQ== }
 
@@ -1042,9 +1049,6 @@ packages:
     hasown@2.0.2:
         resolution: { integrity: sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ== }
         engines: { node: ">= 0.4" }
-
-    history@5.3.0:
-        resolution: { integrity: sha512-ZqaKwjjrAYUYfLG+htGaIIZ4nioX2L70ZUMIFysS3xvBsSG4x/n1V6TXV3N8ZYNuFGlDirFg32T7B6WOUPDYcQ== }
 
     human-signals@5.0.0:
         resolution: { integrity: sha512-AXcZb6vzzrFAUE61HnN4mpLqd/cSIwNQjtNWR0euPm6y0iqx3G4gOXaIDdtdDwZmhwe82LA6+zinmW4UBWVePQ== }
@@ -1212,16 +1216,15 @@ packages:
         peerDependencies:
             react: ^18.0.0
 
-    react-router-dom@6.0.0:
-        resolution: { integrity: sha512-bPXyYipf0zu6K7mHSEmNO5YqLKq2q9N+Dsahw9Xh3oq1IirsI3vbnIYcVWin6A0zWyHmKhMGoV7Gr0j0kcuVFg== }
+    react-router@7.1.5:
+        resolution: { integrity: sha512-8BUF+hZEU4/z/JD201yK6S+UYhsf58bzYIDq2NS1iGpwxSXDu7F+DeGSkIXMFBuHZB21FSiCzEcUb18cQNdRkA== }
+        engines: { node: ">=20.0.0" }
         peerDependencies:
-            react: ">=16.8"
-            react-dom: ">=16.8"
-
-    react-router@6.0.0:
-        resolution: { integrity: sha512-FcTRCihYZvERMNbG54D9+Wkv2cj/OtoxNlA/87D7vxKYlmSmbF9J9XChI9Is44j/behEiOhbovgVZBhKQn+wgA== }
-        peerDependencies:
-            react: ">=16.8"
+            react: ">=18"
+            react-dom: ">=18"
+        peerDependenciesMeta:
+            react-dom:
+                optional: true
 
     react@18.0.0:
         resolution: { integrity: sha512-x+VL6wbT4JRVPm7EGxXhZ8w8LTROaxPXOqhlGyVSrv0sB1jkyFGgXxJ8LVoPRLvPR6/CIZGFmfzqUa2NYeMr2A== }
@@ -1280,6 +1283,9 @@ packages:
 
     serialize-javascript@6.0.2:
         resolution: { integrity: sha512-Saa1xPByTTq2gdeFZYLLo+RFE35NHZkAbqZeWNd3BpzppeVisAqpDjcp8dyf6uIvEqJRd46jemmyA4iFIeVk8g== }
+
+    set-cookie-parser@2.7.1:
+        resolution: { integrity: sha512-IOc8uWeOZgnb3ptbCURJWNjWUPcO3ZnTTdzsurqERrP6nPyv+paC55vJM0LpOlT2ne+Ix+9+CRG1MNLlyZ4GjQ== }
 
     shebang-command@2.0.0:
         resolution: { integrity: sha512-kHxr2zZpYtdmrN1qDjrrX/Z1rR1kG8Dx+gkpK1G4eXmvXswmcE1hTWBWYUzlraYw1/yZp6YuDY77YtvbN0dmDA== }
@@ -1342,6 +1348,9 @@ packages:
 
     tslib@2.6.2:
         resolution: { integrity: sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q== }
+
+    turbo-stream@2.4.0:
+        resolution: { integrity: sha512-FHncC10WpBd2eOmGwpmQsWLDoK4cqsA/UT/GqNoaKOQnT8uzhtCbg3EoUDMvqpOSAI0S26mr0rkjzbOO6S3v1g== }
 
     typescript@5.2.2:
         resolution: { integrity: sha512-mI4WrpHsbCIcwT9cF4FZvr80QUeKvsUsUvKDoR+X/7XHQH98xYD8YHZg7ANtz2GtZt/CBq2QJ0thkGJMHfqc1w== }
@@ -2307,6 +2316,8 @@ snapshots:
     "@rollup/rollup-win32-x64-msvc@4.0.2":
         optional: true
 
+    "@types/cookie@0.6.0": {}
+
     "@types/estree@1.0.6": {}
 
     "@types/node@20.8.2": {}
@@ -2399,6 +2410,8 @@ snapshots:
 
     convert-source-map@2.0.0: {}
 
+    cookie@1.0.2: {}
+
     core-js-compat@3.40.0:
         dependencies:
             browserslist: 4.24.4
@@ -2471,10 +2484,6 @@ snapshots:
     hasown@2.0.2:
         dependencies:
             function-bind: 1.1.2
-
-    history@5.3.0:
-        dependencies:
-            "@babel/runtime": 7.23.1
 
     human-signals@5.0.0: {}
 
@@ -2617,16 +2626,15 @@ snapshots:
             react: 18.0.0
             scheduler: 0.21.0
 
-    react-router-dom@6.0.0(react-dom@18.0.0(react@18.0.0))(react@18.0.0):
+    react-router@7.1.5(react-dom@18.0.0(react@18.0.0))(react@18.0.0):
         dependencies:
+            "@types/cookie": 0.6.0
+            cookie: 1.0.2
             react: 18.0.0
+            set-cookie-parser: 2.7.1
+            turbo-stream: 2.4.0
+        optionalDependencies:
             react-dom: 18.0.0(react@18.0.0)
-            react-router: 6.0.0(react@18.0.0)
-
-    react-router@6.0.0(react@18.0.0):
-        dependencies:
-            history: 5.3.0
-            react: 18.0.0
 
     react@18.0.0:
         dependencies:
@@ -2700,6 +2708,8 @@ snapshots:
         dependencies:
             randombytes: 2.1.0
 
+    set-cookie-parser@2.7.1: {}
+
     shebang-command@2.0.0:
         dependencies:
             shebang-regex: 3.0.0
@@ -2755,6 +2765,8 @@ snapshots:
             is-number: 7.0.0
 
     tslib@2.6.2: {}
+
+    turbo-stream@2.4.0: {}
 
     typescript@5.2.2: {}
 
