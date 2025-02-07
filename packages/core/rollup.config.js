@@ -1,12 +1,12 @@
-import { nodeResolve } from "@rollup/plugin-node-resolve"
-import typescript from "@rollup/plugin-typescript"
-import commonjs from "@rollup/plugin-commonjs"
-import terser from "@rollup/plugin-terser"
-import babel from "@rollup/plugin-babel"
+import { nodeResolve } from "@rollup/plugin-node-resolve";
+import typescript from "@rollup/plugin-typescript";
+import commonjs from "@rollup/plugin-commonjs";
+import terser from "@rollup/plugin-terser";
+import babel from "@rollup/plugin-babel";
 
 const commonConfig = {
     input: "src/index.ts",
-    external: ["react", "react-dom", "react-router-dom", "react/jsx-runtime"],
+    external: ["react", "react-dom", "react/jsx-runtime"],
     plugins: [
         nodeResolve(),
         babel({
@@ -16,7 +16,7 @@ const commonConfig = {
         typescript(),
         commonjs(),
     ],
-}
+};
 
 const config = [
     {
@@ -53,5 +53,5 @@ const config = [
         },
         plugins: [...commonConfig.plugins, terser()],
     },
-]
-export default config
+];
+export default config;

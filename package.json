@@ -1,67 +1,26 @@
 {
     "name": "keepalive-for-react",
-    "version": "3.0.10",
+    "version": "0.0.0",
+    "private": true,
     "description": "A react <KeepAlive/> component like <keep-alive/> in vue",
-    "homepage": "https://github.com/irychen/keepalive-for-react",
-    "exports": {
-        ".": {
-            "types": "./dist/types/index.d.ts",
-            "development": {
-                "import": "./dist/esm/index.mjs",
-                "require": "./dist/cjs/index.cjs"
-            },
-            "production": {
-                "import": "./dist/esm/index-min.mjs",
-                "require": "./dist/cjs/index-min.cjs"
-            },
-            "default": {
-                "import": "./dist/esm/index-min.mjs",
-                "require": "./dist/cjs/index-min.cjs"
-            }
-        }
-    },
-    "module": "./dist/esm/index.mjs",
-    "main": "./dist/cjs/index.cjs",
-    "types": "./dist/types/index.d.ts",
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/irychen/keepalive-for-react.git"
-    },
-    "files": [
-        "dist/types/**/*.d.ts",
-        "dist/esm/index.mjs",
-        "dist/esm/index-min.mjs",
-        "dist/cjs/index.cjs",
-        "dist/cjs/index-min.cjs"
-    ],
     "lint-staged": {
-        "src/**/*.{js,ts,tsx}": [
+        "*": [
+            "prettier --write --cache --ignore-unknown"
+        ],
+        "packages/**/*.{js,ts,json,tsx}": [
             "prettier --write"
         ]
     },
     "type": "module",
     "scripts": {
-        "format": "prettier --write \"src/**/*.{ts,tsx}\"",
+        "format": "prettier --write \"**/*.{ts,tsx,json}\"",
         "test": "echo \"Error: no test specified\" && exit 1",
-        "build:main": "rollup --config rollup.config.js",
-        "build:types": "tsc -b ./tsconfig.types.json",
-        "build": "npm run format && npm run build:main && npm run build:types",
+        "build": "pnpm -r build",
+        "clean": "pnpm -r clean",
         "prepare": "husky"
     },
-    "keywords": [
-        "keepalive",
-        "keep-alive",
-        "react keepalive",
-        "keepalive for react",
-        "keepalive-for-react"
-    ],
     "author": "wongyichen",
     "license": "MIT",
-    "peerDependencies": {
-        "react": ">=16.8.0",
-        "react-dom": ">=16.8.0",
-        "react-router-dom": ">=6.0.0"
-    },
     "devDependencies": {
         "@babel/core": "^7.23.0",
         "@babel/plugin-transform-runtime": "^7.22.15",
@@ -83,5 +42,9 @@
         "rollup": "^4.0.2",
         "tslib": "^2.6.2",
         "typescript": "^5.2.2"
+    },
+    "engines": {
+        "node": ">=16",
+        "npm": ">=8"
     }
 }

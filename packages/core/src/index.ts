@@ -1,5 +1,4 @@
-import KeepAlive, { KeepAliveRef, useKeepAliveRef } from "./components/KeepAlive";
-import KeepAliveRouteOutlet from "./components/KeepAliveRouteOutlet";
+import KeepAlive, { KeepAliveProps, KeepAliveRef, useKeepAliveRef } from "./components/KeepAlive";
 import useEffectOnActive from "./hooks/useEffectOnActive";
 import useKeepAliveContext from "./hooks/useKeepAliveContext";
 import useLayoutEffectOnActive from "./hooks/useLayoutEffectOnActive";
@@ -11,7 +10,6 @@ const useKeepaliveRef = useKeepAliveRef;
 
 export {
     KeepAlive as default,
-    KeepAliveRouteOutlet,
     KeepAlive,
     useKeepAliveRef,
     useKeepaliveRef,
@@ -20,4 +18,4 @@ export {
     useKeepAliveContext,
 };
 
-export type { KeepAliveRef };
+export type { KeepAliveRef, KeepAliveProps };

@@ -1,6 +1,6 @@
 import { ComponentType, Fragment, ReactNode, useMemo } from "react";
 import { useLocation, useOutlet } from "react-router-dom";
-import KeepAlive, { KeepAliveProps } from "../KeepAlive";
+import KeepAlive, { KeepAliveProps } from "keepalive-for-react";
 
 export interface KeepAliveRouteOutletProps extends Omit<KeepAliveProps, "activeCacheKey"> {
     wrapperComponent?: ComponentType<{ children: ReactNode }>;

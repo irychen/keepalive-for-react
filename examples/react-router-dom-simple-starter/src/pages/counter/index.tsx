@@ -13,7 +13,9 @@ function Counter() {
         <div className="p-[20px]">
             <h1 className="text-center text-xl font-bold py-[10px]">Counter</h1>
             <div className="status text-[12px] mb-[10px] text-center text-white ">
-                <span className={active ? "bg-green-600 rounded-md px-[5px] py-[2px]" : "bg-red-500 rounded-md px-[5px] py-[2px]"}>Active: {active ? "true" : "false"}</span>
+                <span className={active ? "bg-green-600 rounded-md px-[5px] py-[2px]" : "bg-red-500 rounded-md px-[5px] py-[2px]"}>
+                    Active: {active ? "true" : "false"}
+                </span>
             </div>
             <div className="text-center text-xl py-[10px] rounded-md bg-neutral-50 p-[10px]">{count}</div>
             <div className="flex gap-4 justify-center mt-[15px]">
