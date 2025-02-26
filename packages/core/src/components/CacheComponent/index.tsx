@@ -20,7 +20,7 @@ export interface CacheComponentProps {
     destroy: (cacheKey: string | string[]) => Promise<void>;
 }
 
-const cacheDivClassName = "keepalive-cache-div";
+const cacheDivMarkedClassName = "keepalive-cache-div";
 
 function getChildNodes(dom?: HTMLDivElement) {
     return dom ? Array.from(dom.children) : [];
@@ -28,7 +28,7 @@ function getChildNodes(dom?: HTMLDivElement) {
 
 function removeDivNodes(nodes: Element[]) {
     nodes.forEach(node => {
-        if (node.classList.contains(cacheDivClassName)) {
+        if (node.classList.contains(cacheDivMarkedClassName)) {
             node.remove();
         }
     });
@@ -77,12 +77,11 @@ const CacheComponent = memo(
 
         const cacheDiv = useMemo(() => {
             const cacheDiv = document.createElement("div");
-            cacheDiv.classList.add(cacheDivClassName);
             domAttrSet(cacheDiv)
                 .set("data-cache-key", cacheKey)
                 .set("style", "height: 100%")
                 .set("data-render-count", renderCount.toString());
-            cacheDiv.className = cacheNodeClassName;
+            cacheDiv.className = cacheDivMarkedClassName + (cacheNodeClassName ? ` ${cacheNodeClassName}` : "");
             return cacheDiv;
         }, [renderCount, cacheNodeClassName]);
 
