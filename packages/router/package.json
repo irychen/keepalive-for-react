@@ -1,6 +1,6 @@
 {
     "name": "keepalive-for-react-router",
-    "version": "2.0.1",
+    "version": "2.0.2",
     "description": "React Router integration for keepalive-for-react",
     "homepage": "https://github.com/irychen/keepalive-for-react",
     "repository": {
@@ -52,7 +52,7 @@
     "author": "wongyichen",
     "license": "MIT",
     "peerDependencies": {
-        "keepalive-for-react": "workspace:^",
+        "keepalive-for-react": "^4.0.0",
         "react": ">=16.8.0",
         "react-dom": ">=16.8.0",
         "react-router": ">=7.0.0"

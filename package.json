@@ -17,7 +17,13 @@
         "test": "echo \"Error: no test specified\" && exit 1",
         "build": "pnpm -r build",
         "clean": "pnpm -r clean",
-        "prepare": "husky"
+        "prepare": "husky",
+        "publish:core": "cd packages/core && npm publish --access public",
+        "publish:router": "cd packages/router && npm publish --access public",
+        "publish:all": "pnpm build && pnpm publish:core && pnpm publish:router",
+        "version:core": "cd packages/core && npm version",
+        "version:router": "cd packages/router && npm version",
+        "publish": "node publish.js"
     },
     "author": "wongyichen",
     "license": "MIT",
