@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter } from "react-router";
 import Layout from "../layout";
 import { lazy } from "react";
 import Nested from "../pages/nested";
